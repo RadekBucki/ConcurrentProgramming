@@ -1,6 +1,5 @@
 .idea
 .vs
-*.sln
 *.user
-bin
-obj
+[Bb]in/
+[Oo]bj/
