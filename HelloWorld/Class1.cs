@@ -6,5 +6,10 @@
         {
             return "Hello world";
         }
+
+        public static int Add(int x, int y)
+        {
+            return x + y;
+        }
     }
 }
