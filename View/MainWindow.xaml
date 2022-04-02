@@ -2,6 +2,7 @@
     Height="650"
     Title="MainWindow"
     Width="800"
+    ResizeMode="NoResize"
     mc:Ignorable="d"
     x:Class="Presentation.View.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -10,7 +11,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:vm="clr-namespace:Presentation.ViewModel;assembly=ViewModel">
     <Window.DataContext>
-        <vm:MainViewModel/>
+        <vm:MainViewModel />
     </Window.DataContext>
     <Grid>
         <Label
@@ -25,11 +26,36 @@
             FontSize="20"
             HorizontalAlignment="Left"
             Margin="30,107,0,0"
-            VerticalAlignment="Top" Height="44" Width="108" x:Name="StartButton" Command="{Binding StartCommand}"/>
-        <Rectangle HorizontalAlignment="Left" Height="580" Margin="180,0,0,0" Stroke="Black" VerticalAlignment="Center" Width="580" Fill="Black"/>
-        <TextBox HorizontalAlignment="Left" Margin="24,61,0,0" TextWrapping="Wrap" Text="{Binding NumOfBalls}" VerticalAlignment="Top" Width="120" FontSize="20" IsEnabled="{Binding ButtonEnabled}"/>
-        <Label Content="Liczba kul&#xD;&#xA;" HorizontalAlignment="Left" Margin="35,21,0,0" VerticalAlignment="Top" Width="98" FontSize="20" Height="35"/>
-        <Button Content="Stop" HorizontalAlignment="Left" Margin="30,165,0,0" VerticalAlignment="Top" Height="39" Width="108" Background="Red" FontSize="20" Command="{Binding StopCommand}"/>
-
+            VerticalAlignment="Top" Height="44" Width="108" x:Name="StartButton"
+            Command="{Binding StartCommand}" />
+        <TextBox HorizontalAlignment="Left" Margin="24,61,0,0" TextWrapping="Wrap"
+                 Text="{Binding NumOfBalls}"
+                 VerticalAlignment="Top" Width="120" FontSize="20"
+                 IsEnabled="{Binding ButtonEnabled}" />
+        <Label Content="Liczba kul&#xD;&#xA;" HorizontalAlignment="Left" Margin="35,21,0,0"
+               VerticalAlignment="Top"
+               Width="98" FontSize="20" Height="35" />
+        <Button Content="Stop" HorizontalAlignment="Left" Margin="30,165,0,0" 
+                VerticalAlignment="Top" Height="39"
+                Width="108" Background="#FF0000" FontSize="20" Command="{Binding StopCommand}" />
+        <ItemsControl ItemsSource="{Binding Balls}" Width="580" Height="580" 
+                      Margin="180,0,0,0">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas Background="Black" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemContainerStyle>
+                <Style TargetType="ContentPresenter">
+                    <Setter Property="Canvas.Left" Value="{Binding XPos}" />
+                    <Setter Property="Canvas.Top" Value="{Binding YPos}" />
+                </Style>
+            </ItemsControl.ItemContainerStyle>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Ellipse Width="20" Height="20" Fill="Green" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </Grid>
 </Window>

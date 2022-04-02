@@ -1,14 +1,22 @@
-﻿using Presentation.ViewModel.MVVMCore;
+﻿using Presentation.Model;
+using Presentation.ViewModel.MVVMCore;
+using System.Collections.ObjectModel;
 
 namespace Presentation.ViewModel
 {
     public class MainViewModel : BaseViewModel
     {
+        private DataLayer _dataLayer;
+        private ObservableCollection<Ball>? _balls;
+        private bool _buttonEnabled = true;
+        private string _numOfBalls;
         public MainViewModel()
         {
-            StartCommand = new RelayCommand(this.StartBalls, this.CanDoDisableButton);
-            StopCommand = new RelayCommand(this.StopBalls, this.CanDoEnableButton);
-            m_NumOfBalls = "";
+            StartCommand = new RelayCommand(StartBalls, CanDoDisableButton);
+            StopCommand = new RelayCommand(StopBalls, CanDoEnableButton);
+            _numOfBalls = "";
+            DataLayer = new DataLayer();
+            Balls = new ObservableCollection<Ball>(DataLayer.Ball);
         }
 
         public RelayCommand StartCommand
@@ -21,36 +29,47 @@ namespace Presentation.ViewModel
             get;
         }
 
-        private bool m_buttonEnabled = true;
+
         public bool ButtonEnabled
         {
-            get { return m_buttonEnabled; }
+            get => _buttonEnabled;
             set
             { 
-                m_buttonEnabled = value; 
+                _buttonEnabled = value; 
+                OnPropertyChanged();
+            }
+        }
+        
+        public string NumOfBalls
+        {
+            get => _numOfBalls;
+            set { _numOfBalls = value; OnPropertyChanged(); }
+        }
+
+        public ObservableCollection<Ball>? Balls
+        {
+            get => _balls;
+            set
+            {
+                _balls = value;
                 OnPropertyChanged();
             }
         }
 
-        private string m_NumOfBalls;
-        public string NumOfBalls
-        {
-            get { return m_NumOfBalls; }
-            set { m_NumOfBalls = value; OnPropertyChanged(); }
-        }
         private void StartBalls()
         {
             try
             {
-                int ballsNum = Int32.Parse(NumOfBalls);
-                if (ballsNum > 0)
-                {
-                    DoChangeButtonEnabled();
-                }
-                else
+                int ballsNum = int.Parse(NumOfBalls);
+                if (ballsNum < 0)
                 {
                     throw new ArgumentException("Not an positive integer");
                 }
+                for (int i = 0; i < ballsNum; i++)
+                {
+                    Balls?.Add(new Ball());
+                }
+                DoChangeButtonEnabled();
             }
             catch (Exception ex)
             {
@@ -61,6 +80,7 @@ namespace Presentation.ViewModel
 
         private void StopBalls()
         {
+            Balls?.Clear();
             DoChangeButtonEnabled();
         }
 
@@ -80,5 +100,16 @@ namespace Presentation.ViewModel
         {
             return !ButtonEnabled;
         }
+
+        public DataLayer DataLayer
+        {
+            get => _dataLayer;
+            set
+            {
+                _dataLayer = value;
+            }
+        }
+
+
     }
 }
