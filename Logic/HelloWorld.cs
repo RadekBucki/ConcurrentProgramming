@@ -1,10 +1,10 @@
-﻿namespace HelloWorld
+namespace Logic
 {
-    public class Class1
+    public static class HelloWorld
     {
         public static string GetHelloWorld()
         {
-            return "Hello world";
+            return Data.HelloWorld.GetHelloWorld();
         }
 
         public static int Add(int x, int y)
