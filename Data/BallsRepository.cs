@@ -13,5 +13,10 @@
         {
             return _balls.ToArray();
         }
+
+        public void Clear()
+        {
+            _balls.Clear();
+        }
     }
 }

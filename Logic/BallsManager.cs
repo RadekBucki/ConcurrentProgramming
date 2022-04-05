@@ -14,13 +14,19 @@ namespace Logic
             _boardWidth = boardWidth;
             _boardHeight = boardHeight;
         }
-        
+
         public Ball CreateBall(int x, int y, int xSpeed, int ySpeed)
         {
-            if (x < 0 || x > _boardWidth || y < 0 || y > _boardHeight)
+            if (
+                x < 0 || x > _boardWidth ||
+                y < 0 || y > _boardHeight ||
+                xSpeed > 100 || xSpeed < -100 ||
+                ySpeed > 100 || ySpeed < -100
+            )
             {
                 throw new ArgumentException("Coordinate out of board range.");
             }
+
             Ball ball = new(x, y, xSpeed, ySpeed);
             _ballsRepository.Add(ball);
             return ball;
@@ -29,11 +35,10 @@ namespace Logic
         public Ball CreateBallInRandomPlace()
         {
             Random r = new();
-            int x = r.Next(0, _boardWidth);
-            int y = r.Next(0, _boardHeight);
-            int xSpeed = r.Next(-100, 100);
-            int ySpeed = r.Next(-100, 100);
-            return CreateBall(x, y, xSpeed, ySpeed);
+            return CreateBall(
+                r.Next(0, _boardWidth), r.Next(0, _boardHeight),
+                r.Next(-100, 100), r.Next(-100, 100)
+            );
         }
 
         public Ball[] GetAllBalls()
@@ -43,7 +48,7 @@ namespace Logic
 
         public void RemoveAllBalls()
         {
-            _ballsRepository = new BallsRepository();
+            _ballsRepository.Clear();
         }
     }
 }

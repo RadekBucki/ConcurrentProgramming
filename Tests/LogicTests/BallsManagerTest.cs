@@ -24,13 +24,17 @@ namespace Tests.LogicTests
         }
 
         [DataTestMethod]
-        [DataRow(-1, 1)]
-        [DataRow(1, -1)]
-        [DataRow(1, 101)]
-        [DataRow(101, 1)]
-        public void CreateBallNegativeTest(int x, int y)
+        [DataRow(-1, 1, 1, 1)]
+        [DataRow(1, -1, 1, 1)]
+        [DataRow(1, 101, 1, 1)]
+        [DataRow(101, 1, 1, 1)]
+        [DataRow(101, 1, -101, 1)]
+        [DataRow(101, 1, 101, 1)]
+        [DataRow(101, 1, 1, 101)]
+        [DataRow(101, 1, 1, -101)]
+        public void CreateBallNegativeTest(int x, int y, int xSpeed, int ySpeed)
         {
-            Assert.ThrowsException<ArgumentException>(() => _ballsManager.CreateBall(x, y, 1, 2));
+            Assert.ThrowsException<ArgumentException>(() => _ballsManager.CreateBall(x, y, xSpeed, ySpeed));
             Assert.AreEqual(0, _ballsManager.GetAllBalls().Length);
         }
 

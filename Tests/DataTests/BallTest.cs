@@ -10,18 +10,18 @@ namespace Tests.DataTests
         [TestMethod]
         public void CreateBallTest()
         {
-            Assert.AreEqual(1, ball.X);
-            Assert.AreEqual(2, ball.Y);
+            Assert.AreEqual(1, ball.XPosition);
+            Assert.AreEqual(2, ball.YPosition);
             Assert.AreEqual(0, ball.XSpeed);
             Assert.AreEqual(0, ball.YSpeed);
         }
         [TestMethod]
         public void SetBallCoordinatesTest()
         {
-            ball.X = 2;
-            ball.Y = 3;
-            Assert.AreEqual(2, ball.X);
-            Assert.AreEqual(3, ball.Y);
+            ball.XPosition = 2;
+            ball.YPosition = 3;
+            Assert.AreEqual(2, ball.XPosition);
+            Assert.AreEqual(3, ball.YPosition);
         }
         [TestMethod]
         public void SetBallSpeedTest()
