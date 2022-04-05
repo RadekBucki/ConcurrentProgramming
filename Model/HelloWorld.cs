@@ -4,7 +4,7 @@
     {
         public static string GetHelloWorld()
         {
-            return Logic.HelloWorld.GetHelloWorld();
+            return "HelloWorld";
         }
     }
 }
