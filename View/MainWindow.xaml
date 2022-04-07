@@ -47,8 +47,8 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemContainerStyle>
                 <Style TargetType="ContentPresenter">
-                    <Setter Property="Canvas.Left" Value="{Binding XPos}" />
-                    <Setter Property="Canvas.Top" Value="{Binding YPos}" />
+                    <Setter Property="Canvas.Left" Value="{Binding XPosition}" />
+                    <Setter Property="Canvas.Top" Value="{Binding YPosition}" />
                 </Style>
             </ItemsControl.ItemContainerStyle>
             <ItemsControl.ItemTemplate>
