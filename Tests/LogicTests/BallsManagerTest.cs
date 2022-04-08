@@ -19,7 +19,7 @@ namespace Tests.LogicTests
         [TestMethod]
         public void CreateBallTest()
         {
-            _ballsManager.CreateBall(1, 2, 1, 2);
+            _ballsManager.CreateBall(10, 20, 1,2);
             Assert.AreEqual(1, _ballsManager.GetAllBalls().Length);
         }
 

@@ -8,6 +8,7 @@ namespace Presentation.ViewModel
     {
         private bool _buttonEnabled = true;
         private string _numOfBalls;
+
         public MainViewModel()
         {
             StartCommand = new RelayCommand(StartBalls, CanDoDisableButton);
@@ -16,33 +17,32 @@ namespace Presentation.ViewModel
             MainModel = new MainModel();
         }
 
-        public RelayCommand StartCommand
-        {
-            get;
-        }
+        public RelayCommand StartCommand { get; }
 
-        public RelayCommand StopCommand
-        {
-            get;
-        }
+        public RelayCommand StopCommand { get; }
 
 
         public bool ButtonEnabled
         {
             get => _buttonEnabled;
-            set { _buttonEnabled = value; OnPropertyChanged(); }
+            set
+            {
+                _buttonEnabled = value;
+                OnPropertyChanged();
+            }
         }
-        
+
         public string NumOfBalls
         {
             get => _numOfBalls;
-            set { _numOfBalls = value; OnPropertyChanged(); }
+            set
+            {
+                _numOfBalls = value;
+                OnPropertyChanged();
+            }
         }
-        
-        public MainModel MainModel
-        {
-            get;
-        }
+
+        public MainModel MainModel { get; }
 
         public Ball[]? Balls
         {

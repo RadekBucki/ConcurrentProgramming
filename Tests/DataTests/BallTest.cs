@@ -6,7 +6,8 @@ namespace Tests.DataTests
     [TestClass]
     public class BallTest
     {
-        Ball ball = new(1, 2);
+        Ball ball = new(1, 2, 1);
+
         [TestMethod]
         public void CreateBallTest()
         {
@@ -14,7 +15,9 @@ namespace Tests.DataTests
             Assert.AreEqual(2, ball.YPosition);
             Assert.AreEqual(0, ball.XSpeed);
             Assert.AreEqual(0, ball.YSpeed);
+            Assert.AreEqual(1, ball.Radius);
         }
+
         [TestMethod]
         public void SetBallCoordinatesTest()
         {
@@ -23,6 +26,7 @@ namespace Tests.DataTests
             Assert.AreEqual(2, ball.XPosition);
             Assert.AreEqual(3, ball.YPosition);
         }
+
         [TestMethod]
         public void SetBallSpeedTest()
         {
@@ -30,6 +34,13 @@ namespace Tests.DataTests
             ball.YSpeed = 3;
             Assert.AreEqual(2, ball.XSpeed);
             Assert.AreEqual(3, ball.YSpeed);
+        }
+
+        [TestMethod]
+        public void SetRadiusTest()
+        {
+            ball.Radius = 2;
+            Assert.AreEqual(2, ball.Radius);
         }
     }
 }

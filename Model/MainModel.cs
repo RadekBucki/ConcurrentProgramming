@@ -5,7 +5,7 @@ namespace Presentation.Model;
 
 public class MainModel
 {
-    private readonly BallsManager _ballsManager = new(561, 561);
+    private readonly BallsManager _ballsManager = new(580, 580);
     
     public Ball[] GetBallsArray()
     {
