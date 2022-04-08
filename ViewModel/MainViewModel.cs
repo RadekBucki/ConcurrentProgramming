@@ -6,7 +6,6 @@ namespace Presentation.ViewModel
 {
     public class MainViewModel : BaseViewModel
     {
-        private Ball[]? _balls;
         private bool _buttonEnabled = true;
         private string _numOfBalls;
         public MainViewModel()
@@ -15,7 +14,6 @@ namespace Presentation.ViewModel
             StopCommand = new RelayCommand(StopBalls, CanDoEnableButton);
             _numOfBalls = "";
             MainModel = new MainModel();
-            Balls = MainModel.GetBallsArray();
         }
 
         public RelayCommand StartCommand
@@ -48,8 +46,7 @@ namespace Presentation.ViewModel
 
         public Ball[]? Balls
         {
-            get => _balls;
-            set { _balls = value; OnPropertyChanged(); }
+            get => MainModel.GetBallsArray();
         }
 
         private void StartBalls()
@@ -62,7 +59,7 @@ namespace Presentation.ViewModel
                     throw new ArgumentException("Not an positive integer");
                 }
                 MainModel.CreateNBallsInRandomPlaces(ballsNum);
-                Balls = MainModel.GetBallsArray();
+                OnPropertyChanged("Balls");
                 DoChangeButtonEnabled();
             }
             catch (Exception)
@@ -74,8 +71,8 @@ namespace Presentation.ViewModel
 
         private void StopBalls()
         {
-            Balls = Array.Empty<Ball>();
             MainModel.ClearBalls();
+            OnPropertyChanged("Balls");
             DoChangeButtonEnabled();
         }
 
