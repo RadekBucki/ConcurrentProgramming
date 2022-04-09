@@ -1,15 +1,15 @@
 ﻿<Window
     Height="650"
+    ResizeMode="NoResize"
     Title="MainWindow"
     Width="800"
-    ResizeMode="NoResize"
     mc:Ignorable="d"
     x:Class="Presentation.View.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:vm="clr-namespace:Presentation.ViewModel;assembly=ViewModel">
+    xmlns:vm="clr-namespace:Presentation.ViewModel;assembly=ViewModel"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Window.DataContext>
         <vm:MainViewModel />
     </Window.DataContext>
@@ -22,24 +22,47 @@
             VerticalAlignment="Top"
             x:Name="HelloWorld" />
         <Button
+            Command="{Binding StartCommand}"
             Content="Start"
             FontSize="20"
+            Height="44"
             HorizontalAlignment="Left"
             Margin="30,107,0,0"
-            VerticalAlignment="Top" Height="44" Width="108" x:Name="StartButton"
-            Command="{Binding StartCommand}" />
-        <TextBox HorizontalAlignment="Left" Margin="24,61,0,0" TextWrapping="Wrap"
-                 Text="{Binding NumOfBalls}"
-                 VerticalAlignment="Top" Width="120" FontSize="20"
-                 IsEnabled="{Binding ButtonEnabled}" />
-        <Label Content="Liczba kul&#xD;&#xA;" HorizontalAlignment="Left" Margin="35,21,0,0"
-               VerticalAlignment="Top"
-               Width="98" FontSize="20" Height="35" />
-        <Button Content="Stop" HorizontalAlignment="Left" Margin="30,165,0,0" 
-                VerticalAlignment="Top" Height="39"
-                Width="108" Background="#FF0000" FontSize="20" Command="{Binding StopCommand}" />
-        <ItemsControl ItemsSource="{Binding Balls}" Width="580" Height="580" 
-                      Margin="180,0,0,0">
+            VerticalAlignment="Top"
+            Width="108"
+            x:Name="StartButton" />
+        <TextBox
+            FontSize="20"
+            HorizontalAlignment="Left"
+            IsEnabled="{Binding ButtonEnabled}"
+            Margin="24,61,0,0"
+            Text="{Binding NumOfBalls}"
+            TextWrapping="Wrap"
+            VerticalAlignment="Top"
+            Width="120" />
+        <Label
+            Content="Liczba kul&#xD;&#xA;"
+            FontSize="20"
+            Height="35"
+            HorizontalAlignment="Left"
+            Margin="35,21,0,0"
+            VerticalAlignment="Top"
+            Width="98" />
+        <Button
+            Background="#FF0000"
+            Command="{Binding StopCommand}"
+            Content="Stop"
+            FontSize="20"
+            Height="39"
+            HorizontalAlignment="Left"
+            Margin="30,165,0,0"
+            VerticalAlignment="Top"
+            Width="108" />
+        <ItemsControl
+            Height="580"
+            ItemsSource="{Binding Balls}"
+            Margin="180,0,0,0"
+            Width="580">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Canvas Background="Black" />
@@ -53,7 +76,11 @@
             </ItemsControl.ItemContainerStyle>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Ellipse Width="20" Height="20" Fill="Green" />
+                    <Path Fill="Green">
+                        <Path.Data>
+                            <EllipseGeometry RadiusX="{Binding Radius}" RadiusY="{Binding Radius}" />
+                        </Path.Data>
+                    </Path>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>

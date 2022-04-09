@@ -1,6 +1,4 @@
-﻿using System.Windows;
-
-namespace Presentation.View
+﻿namespace Presentation.View
 {
     public partial class MainWindow
     {
