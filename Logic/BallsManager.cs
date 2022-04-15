@@ -11,14 +11,13 @@ namespace Logic
         private readonly int _boardHeight;
         private readonly int _ballRadius;
         private readonly BallsRepository _ballsRepository = new();
-        private readonly CancellationTokenSource _tokenSource;
+        private Timer? _movementTimer;
 
         public BallsManager(int boardWidth, int boardHeight)
         {
             _boardWidth = boardWidth;
             _boardHeight = boardHeight;
             _ballRadius = Math.Min(boardHeight, boardWidth) / 50;
-            _tokenSource = new CancellationTokenSource();
         }
 
         public Ball CreateBall(int x, int y, int xSpeed, int ySpeed)
@@ -61,33 +60,29 @@ namespace Logic
 
         public void StartBalls()
         {
-            Task.Run(MoveBallsAccordingToSpeed, _tokenSource.Token);
+            _movementTimer = new Timer(MoveBallsAccordingToSpeed, null, 0, 8);
         }
 
         public void StopBalls()
         {
-            _tokenSource.Cancel();
+            _movementTimer?.Dispose();
         }
-        public void MoveBallsAccordingToSpeed()
+        public void MoveBallsAccordingToSpeed(Object? stateInfo)
         {
-            while (true)
+            foreach (var ball in _ballsRepository.GetBalls())
             {
-                foreach (var ball in _ballsRepository.GetBalls())
+                if (ball.XPosition + ball.XSpeed >= _boardWidth - _ballRadius ||
+                    ball.XPosition + ball.XSpeed <= _ballRadius)
                 {
-                    if (ball.XPosition + ball.XSpeed >= _boardWidth - _ballRadius ||
-                        ball.XPosition + ball.XSpeed <= _ballRadius)
-                    {
-                        _ballsRepository.Remove(ball);
-                    }
-                    if (ball.YPosition + ball.YSpeed >= _boardHeight - _ballRadius ||
-                        ball.YPosition + ball.YSpeed <= _ballRadius)
-                    {
-                        _ballsRepository.Remove(ball);
-                    }
-                    ball.XPosition += ball.XSpeed;
-                    ball.YPosition += ball.YSpeed;
+                    ball.XSpeed *= -1;
                 }
-                Thread.Sleep(8);
+                if (ball.YPosition + ball.YSpeed >= _boardHeight - _ballRadius ||
+                    ball.YPosition + ball.YSpeed <= _ballRadius)
+                {
+                    ball.YSpeed *= -1;
+                }
+                ball.XPosition += ball.XSpeed;
+                ball.YPosition += ball.YSpeed;
             }
         }
     }

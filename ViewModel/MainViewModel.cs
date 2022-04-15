@@ -8,7 +8,7 @@ namespace Presentation.ViewModel
     {
         private bool _buttonEnabled = true;
         private string _numOfBalls;
-        private readonly CancellationTokenSource _tokenSource;
+        private Timer? _refreshTimer;
 
         public MainViewModel()
         {
@@ -16,7 +16,6 @@ namespace Presentation.ViewModel
             StopCommand = new RelayCommand(StopBalls, CanDoEnableButton);
             _numOfBalls = "";
             MainModel = new MainModel();
-            _tokenSource = new CancellationTokenSource();
         }
 
         public RelayCommand StartCommand { get; }
@@ -64,7 +63,7 @@ namespace Presentation.ViewModel
                 MainModel.CreateNBallsInRandomPlaces(ballsNum);
                 OnPropertyChanged("Balls");
                 MainModel.StartBallsMovement();
-                Task.Run(RefreshBalls, _tokenSource.Token);
+                _refreshTimer = new Timer(RefreshBalls,null,0,8);
                 DoChangeButtonEnabled();
             }
             catch (Exception)
@@ -79,16 +78,13 @@ namespace Presentation.ViewModel
             MainModel.ClearBalls();
             OnPropertyChanged("Balls");
             MainModel.StopBallsMovement();
-            _tokenSource.Cancel();
+            _refreshTimer?.Dispose();
             DoChangeButtonEnabled();
         }
 
-        private void RefreshBalls()
+        private void RefreshBalls(Object? stateInfo)
         {
-            while (true)
-            {
-                OnPropertyChanged("Balls");
-            }
+            OnPropertyChanged("Balls");
         }
 
         private void DoChangeButtonEnabled()
