@@ -8,6 +8,7 @@ namespace Presentation.ViewModel
     {
         private bool _buttonEnabled = true;
         private string _numOfBalls;
+        private readonly CancellationTokenSource _tokenSource;
 
         public MainViewModel()
         {
@@ -15,6 +16,7 @@ namespace Presentation.ViewModel
             StopCommand = new RelayCommand(StopBalls, CanDoEnableButton);
             _numOfBalls = "";
             MainModel = new MainModel();
+            _tokenSource = new CancellationTokenSource();
         }
 
         public RelayCommand StartCommand { get; }
@@ -58,8 +60,11 @@ namespace Presentation.ViewModel
                 {
                     throw new ArgumentException("Not an positive integer");
                 }
+
                 MainModel.CreateNBallsInRandomPlaces(ballsNum);
                 OnPropertyChanged("Balls");
+                MainModel.StartBallsMovement();
+                Task.Run(RefreshBalls, _tokenSource.Token);
                 DoChangeButtonEnabled();
             }
             catch (Exception)
@@ -73,7 +78,17 @@ namespace Presentation.ViewModel
         {
             MainModel.ClearBalls();
             OnPropertyChanged("Balls");
+            MainModel.StopBallsMovement();
+            _tokenSource.Cancel();
             DoChangeButtonEnabled();
+        }
+
+        private void RefreshBalls()
+        {
+            while (true)
+            {
+                OnPropertyChanged("Balls");
+            }
         }
 
         private void DoChangeButtonEnabled()

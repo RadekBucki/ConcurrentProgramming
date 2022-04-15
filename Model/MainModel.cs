@@ -29,4 +29,14 @@ public class MainModel
     {
         _ballsManager.RemoveAllBalls();
     }
+
+    public void StartBallsMovement()
+    {
+        _ballsManager.StartBalls();
+    }
+    
+    public void StopBallsMovement()
+    {
+        _ballsManager.StopBalls();
+    }
 }
