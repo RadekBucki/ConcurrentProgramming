@@ -1,4 +1,6 @@
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Data;
 
 namespace Logic
@@ -9,6 +11,7 @@ namespace Logic
         private readonly int _boardHeight;
         private readonly int _ballRadius;
         private readonly BallsRepository _ballsRepository = new();
+        private Timer? _movementTimer;
 
         public BallsManager(int boardWidth, int boardHeight)
         {
@@ -40,8 +43,8 @@ namespace Logic
 
             return CreateBall(
                 r.Next(_ballRadius, _boardWidth - _ballRadius), r.Next(_ballRadius, _boardHeight - _ballRadius),
-                r.Next(-1 * _boardHeight + _ballRadius, _boardHeight - _ballRadius),
-                r.Next(-1 * _boardHeight + _ballRadius, _boardHeight - _ballRadius)
+                r.Next(-5, 5),
+                r.Next(-5, 5)
             );
         }
 
@@ -53,6 +56,37 @@ namespace Logic
         public void RemoveAllBalls()
         {
             _ballsRepository.Clear();
+        }
+
+        public void StartBalls()
+        {
+            _movementTimer = new Timer(MoveBallsAccordingToSpeed, null, 0, 8);
+        }
+
+        public void StopBalls()
+        {
+            _movementTimer?.Dispose();
+        }
+
+        public void MoveBallsAccordingToSpeed(Object? stateInfo)
+        {
+            foreach (var ball in _ballsRepository.GetBalls())
+            {
+                if (ball.XPosition + ball.XSpeed >= _boardWidth - _ballRadius ||
+                    ball.XPosition + ball.XSpeed <= _ballRadius)
+                {
+                    ball.XSpeed *= -1;
+                }
+
+                if (ball.YPosition + ball.YSpeed >= _boardHeight - _ballRadius ||
+                    ball.YPosition + ball.YSpeed <= _ballRadius)
+                {
+                    ball.YSpeed *= -1;
+                }
+
+                ball.XPosition += ball.XSpeed;
+                ball.YPosition += ball.YSpeed;
+            }
         }
     }
 }

@@ -8,6 +8,7 @@ namespace Presentation.ViewModel
     {
         private bool _buttonEnabled = true;
         private string _numOfBalls;
+        private Timer? _refreshTimer;
 
         public MainViewModel()
         {
@@ -58,8 +59,11 @@ namespace Presentation.ViewModel
                 {
                     throw new ArgumentException("Not an positive integer");
                 }
+
                 MainModel.CreateNBallsInRandomPlaces(ballsNum);
                 OnPropertyChanged("Balls");
+                MainModel.StartBallsMovement();
+                _refreshTimer = new Timer(RefreshBalls, null, 0, 8);
                 DoChangeButtonEnabled();
             }
             catch (Exception)
@@ -73,7 +77,14 @@ namespace Presentation.ViewModel
         {
             MainModel.ClearBalls();
             OnPropertyChanged("Balls");
+            MainModel.StopBallsMovement();
+            _refreshTimer?.Dispose();
             DoChangeButtonEnabled();
+        }
+
+        private void RefreshBalls(Object? stateInfo)
+        {
+            OnPropertyChanged("Balls");
         }
 
         private void DoChangeButtonEnabled()

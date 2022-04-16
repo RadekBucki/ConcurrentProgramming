@@ -8,6 +8,11 @@
         {
             _balls.Add(ball);
         }
+        
+        public void Remove(Ball ball)
+        {
+            _balls.Remove(ball);
+        }
 
         public Ball[] GetBalls()
         {
