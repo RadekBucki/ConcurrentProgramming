@@ -1,8 +1,8 @@
 ﻿<Window
-    Height="650"
     ResizeMode="NoResize"
     Title="MainWindow"
-    Width="800"
+    WindowState="Maximized"
+    WindowStyle="None"
     mc:Ignorable="d"
     x:Class="Presentation.View.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -58,11 +58,7 @@
             Margin="30,165,0,0"
             VerticalAlignment="Top"
             Width="108" />
-        <ItemsControl
-            Height="580"
-            ItemsSource="{Binding Balls}"
-            Margin="180,0,0,0"
-            Width="580">
+        <ItemsControl ItemsSource="{Binding Balls}" Margin="180,20,20,20">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Canvas Background="Black" />

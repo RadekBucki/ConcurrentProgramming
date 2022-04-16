@@ -14,7 +14,7 @@ namespace Presentation.ViewModel
             StartCommand = new RelayCommand(StartBalls, CanDoDisableButton);
             StopCommand = new RelayCommand(StopBalls, CanDoEnableButton);
             _numOfBalls = "";
-            MainModel = new MainModel();
+            MainModel = new MainModel(1000, 800);
         }
 
         public RelayCommand StartCommand { get; }
@@ -49,6 +49,8 @@ namespace Presentation.ViewModel
             get => MainModel.GetBallsArray();
         }
 
+        public int MainWindowHeight { get; set; }
+
         private void StartBalls()
         {
             try
@@ -58,6 +60,7 @@ namespace Presentation.ViewModel
                 {
                     throw new ArgumentException("Not an positive integer");
                 }
+
                 MainModel.CreateNBallsInRandomPlaces(ballsNum);
                 OnPropertyChanged("Balls");
                 DoChangeButtonEnabled();

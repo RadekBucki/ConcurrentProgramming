@@ -5,16 +5,16 @@ namespace Presentation.Model;
 
 public class MainModel
 {
-    private readonly BallsManager _ballsManager = new(580, 580);
-    
+    private readonly BallsManager _ballsManager;
+
+    public MainModel(int boardWidth, int boardHeight)
+    {
+        _ballsManager = new(boardWidth, boardHeight);
+    }
+
     public Ball[] GetBallsArray()
     {
         return _ballsManager.GetAllBalls();
-    }
-
-    public Ball CreateBallInRandomPlace()
-    {
-        return _ballsManager.CreateBallInRandomPlace();
     }
 
     public void CreateNBallsInRandomPlaces(int numOfBalls)
