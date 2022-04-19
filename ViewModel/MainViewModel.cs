@@ -1,4 +1,5 @@
-﻿using Presentation.Model;
+﻿using System.ComponentModel.DataAnnotations;
+using Presentation.Model;
 using Presentation.ViewModel.MVVMCore;
 using Data;
 
@@ -8,13 +9,15 @@ namespace Presentation.ViewModel
     {
         private bool _buttonEnabled = true;
         private string _numOfBalls;
+        private int _panelHeight;
+        private int _panelWidth;
 
         public MainViewModel()
         {
             StartCommand = new RelayCommand(StartBalls, CanDoDisableButton);
             StopCommand = new RelayCommand(StopBalls, CanDoEnableButton);
             _numOfBalls = "";
-            MainModel = new MainModel(1000, 800);
+            // MainModel = new MainModel(_panelHeight, PanelHeight);
         }
 
         public RelayCommand StartCommand { get; }
@@ -42,14 +45,38 @@ namespace Presentation.ViewModel
             }
         }
 
-        public MainModel MainModel { get; }
+        public MainModel? MainModel { get; set; }
 
-        public Ball[]? Balls
+        public Ball[] Balls
         {
-            get => MainModel.GetBallsArray();
+            get => MainModel?.GetBallsArray() ?? Array.Empty<Ball>();
         }
 
-        public int MainWindowHeight { get; set; }
+        public int PanelHeight
+        {
+            get => _panelHeight;
+            set
+            {
+                _panelHeight = value;
+                if (_panelWidth != 0 && _panelHeight != 0)
+                {
+                    MainModel = new MainModel(_panelWidth, _panelHeight);
+                }
+            }
+        }
+
+        public int PanelWidth
+        {
+            get => _panelWidth;
+            set
+            {
+                _panelWidth = value;
+                if (_panelWidth != 0 && _panelHeight != 0)
+                {
+                    MainModel = new MainModel(_panelWidth, _panelHeight);
+                }
+            }
+        }
 
         private void StartBalls()
         {
@@ -61,7 +88,7 @@ namespace Presentation.ViewModel
                     throw new ArgumentException("Not an positive integer");
                 }
 
-                MainModel.CreateNBallsInRandomPlaces(ballsNum);
+                MainModel!.CreateNBallsInRandomPlaces(ballsNum);
                 OnPropertyChanged("Balls");
                 DoChangeButtonEnabled();
             }
@@ -74,7 +101,7 @@ namespace Presentation.ViewModel
 
         private void StopBalls()
         {
-            MainModel.ClearBalls();
+            MainModel!.ClearBalls();
             OnPropertyChanged("Balls");
             DoChangeButtonEnabled();
         }

@@ -61,7 +61,11 @@
         <ItemsControl ItemsSource="{Binding Balls}" Margin="180,20,20,20">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <Canvas Background="Black" />
+                    <Canvas 
+                        Height="{Binding PanelHeight, Mode=OneWay}"
+                        Width="{Binding PanelWidth, Mode=OneWay}"
+                        Background="Black"
+                        />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemContainerStyle>
