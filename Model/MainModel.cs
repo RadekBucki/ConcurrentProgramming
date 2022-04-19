@@ -5,7 +5,7 @@ namespace Presentation.Model;
 
 public class MainModel
 {
-    private readonly BallsManager _ballsManager = new(580, 580);
+    private readonly LogicAbstractAPI _ballsManager = new BallsManager(580, 580);
 
     public Ball[] GetBallsArray()
     {

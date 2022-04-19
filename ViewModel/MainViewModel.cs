@@ -29,7 +29,7 @@ namespace Presentation.ViewModel
             set
             {
                 _buttonEnabled = value;
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -39,7 +39,7 @@ namespace Presentation.ViewModel
             set
             {
                 _numOfBalls = value;
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -61,7 +61,7 @@ namespace Presentation.ViewModel
                 }
 
                 MainModel.CreateNBallsInRandomPlaces(ballsNum);
-                OnPropertyChanged("Balls");
+                RaisePropertyChanged("Balls");
                 MainModel.StartBallsMovement();
                 _refreshTimer = new Timer(RefreshBalls, null, 0, 8);
                 DoChangeButtonEnabled();
@@ -69,14 +69,14 @@ namespace Presentation.ViewModel
             catch (Exception)
             {
                 NumOfBalls = "";
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
         private void StopBalls()
         {
             MainModel.ClearBalls();
-            OnPropertyChanged("Balls");
+            RaisePropertyChanged("Balls");
             MainModel.StopBallsMovement();
             _refreshTimer?.Dispose();
             DoChangeButtonEnabled();
@@ -84,14 +84,14 @@ namespace Presentation.ViewModel
 
         private void RefreshBalls(Object? stateInfo)
         {
-            OnPropertyChanged("Balls");
+            RaisePropertyChanged("Balls");
         }
 
         private void DoChangeButtonEnabled()
         {
             ButtonEnabled = !ButtonEnabled;
-            StartCommand.OnCanExecuteChanged();
-            StopCommand.OnCanExecuteChanged();
+            StartCommand.RaiseCanExecuteChanged();
+            StopCommand.RaiseCanExecuteChanged();
         }
 
         private bool CanDoDisableButton()
