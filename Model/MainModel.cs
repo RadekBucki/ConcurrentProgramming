@@ -6,7 +6,7 @@ namespace Presentation.Model;
 public class MainModel
 {
     private readonly BallsManager _ballsManager = new(580, 580);
-    
+
     public Ball[] GetBallsArray()
     {
         return _ballsManager.GetAllBalls();
@@ -28,5 +28,15 @@ public class MainModel
     public void ClearBalls()
     {
         _ballsManager.RemoveAllBalls();
+    }
+
+    public void StartBallsMovement()
+    {
+        _ballsManager.StartBalls();
+    }
+
+    public void StopBallsMovement()
+    {
+        _ballsManager.StopBalls();
     }
 }
