@@ -1,10 +1,13 @@
+using System.Collections.ObjectModel;
+using Data;
 using Logic;
 
 namespace Presentation.Model;
 
-public class MainModel : ModelAbstractAPI
+internal class MainModel : ModelAbstractAPI
 {
     private readonly LogicAbstractAPI _logicLayer;
+    private ObservableCollection<ICircle> Circles = new();
 
     public MainModel() : this(LogicAbstractAPI.CreateApi(580, 580))
     {
@@ -15,14 +18,22 @@ public class MainModel : ModelAbstractAPI
         _logicLayer = logicLayer;
     }
 
-    public override Object[] GetBallsArray()
+    public override ObservableCollection<ICircle> GetCircles()
     {
-        return _logicLayer.GetAllBalls();
+        Circles.Clear();
+        foreach (IBall ball in _logicLayer.GetAllBalls())
+        {
+            ICircle c = ICircle.CreateCircle(ball.XPosition, ball.YPosition, ball.Radius);
+            Circles.Add(c);
+            ball.PropertyChanged += c.UpdateCircle!;
+        }
+
+        return Circles;
     }
 
-    public override Object CreateBallInRandomPlace()
+    public override void CreateBallInRandomPlace()
     {
-        return _logicLayer.CreateBallInRandomPlace();
+        _logicLayer.CreateBallInRandomPlace();
     }
 
     public override void CreateNBallsInRandomPlaces(int numOfBalls)

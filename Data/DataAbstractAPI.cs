@@ -1,16 +1,12 @@
-namespace Data;
-
-public abstract class DataAbstractAPI
+namespace Data
 {
-    public static DataAbstractAPI CreateApi()
+    public abstract class DataAbstractAPI
     {
-        return new BallsRepository();
+        public static DataAbstractAPI CreateApi()
+        {
+            return new BallsRepository();
+        }
+
+        public abstract void Connect();
     }
-    public abstract void Add(Ball ball);
-
-    public abstract void Remove(Ball ball);
-
-    public abstract Ball[] GetBalls();
-
-    public abstract void Clear();
 }

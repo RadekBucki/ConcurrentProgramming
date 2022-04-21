@@ -1,25 +1,27 @@
 using System;
-using Data;
+using System.Collections.Generic;
 
-namespace Logic;
-
-public abstract class LogicAbstractAPI
+namespace Logic
 {
-    public static LogicAbstractAPI CreateApi(int boardWidth, int boardHeight)
+    public abstract class LogicAbstractAPI
     {
-        return new BallsManager(boardWidth, boardHeight);
+        public static LogicAbstractAPI CreateApi(int boardWidth, int boardHeight)
+        {
+            return new BallsManager(boardWidth, boardHeight);
+        }
+
+        public abstract IBall CreateBall(int x, int y, int xSpeed, int ySpeed);
+
+        public abstract IBall CreateBallInRandomPlace();
+
+        public abstract List<IBall> GetAllBalls();
+
+        public abstract void RemoveAllBalls();
+
+        public abstract void StartBalls();
+
+        public abstract void StopBalls();
+
+        public abstract void MoveBallsAccordingToSpeed(Object? stateInfo);
     }
-    public abstract Ball CreateBall(int x, int y, int xSpeed, int ySpeed);
-
-    public abstract Ball CreateBallInRandomPlace();
-
-    public abstract Ball[] GetAllBalls();
-
-    public abstract void RemoveAllBalls();
-
-    public abstract void StartBalls();
-
-    public abstract void StopBalls();
-
-    public abstract void MoveBallsAccordingToSpeed(Object? stateInfo);
 }

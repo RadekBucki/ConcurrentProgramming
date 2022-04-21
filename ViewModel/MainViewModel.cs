@@ -1,4 +1,5 @@
-﻿using Presentation.Model;
+﻿using System.Collections.ObjectModel;
+using Presentation.Model;
 using Presentation.ViewModel.MVVMCore;
 
 namespace Presentation.ViewModel
@@ -8,12 +9,11 @@ namespace Presentation.ViewModel
         private readonly ModelAbstractAPI _modelLayer;
         private bool _buttonEnabled = true;
         private string _numOfBalls = "";
-        private Timer? _refreshTimer;
 
         public MainViewModel() : this(ModelAbstractAPI.CreateApi())
         {
         }
-        
+
         public MainViewModel(ModelAbstractAPI modelLayer)
         {
             StartCommand = new RelayCommand(StartBalls, CanDoDisableButton);
@@ -24,7 +24,7 @@ namespace Presentation.ViewModel
         public RelayCommand StartCommand { get; }
 
         public RelayCommand StopCommand { get; }
-        
+
         public bool ButtonEnabled
         {
             get => _buttonEnabled;
@@ -45,9 +45,9 @@ namespace Presentation.ViewModel
             }
         }
 
-        public Object[]? Balls
+        public ObservableCollection<ICircle> Circles
         {
-            get => _modelLayer.GetBallsArray();
+            get => _modelLayer.GetCircles();
         }
 
         private void StartBalls()
@@ -61,9 +61,8 @@ namespace Presentation.ViewModel
                 }
 
                 _modelLayer.CreateNBallsInRandomPlaces(ballsNum);
-                RaisePropertyChanged("Balls");
+                RaisePropertyChanged("Circles");
                 _modelLayer.StartBallsMovement();
-                _refreshTimer = new Timer(RefreshBalls, null, 0, 8);
                 DoChangeButtonEnabled();
             }
             catch (Exception)
@@ -76,15 +75,9 @@ namespace Presentation.ViewModel
         private void StopBalls()
         {
             _modelLayer.ClearBalls();
-            RaisePropertyChanged("Balls");
+            RaisePropertyChanged("Circles");
             _modelLayer.StopBallsMovement();
-            _refreshTimer?.Dispose();
             DoChangeButtonEnabled();
-        }
-
-        private void RefreshBalls(Object? stateInfo)
-        {
-            RaisePropertyChanged("Balls");
         }
 
         private void DoChangeButtonEnabled()

@@ -1,6 +1,5 @@
 using System;
 using System.Threading;
-using Data;
 using Logic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
@@ -10,19 +9,19 @@ namespace Tests.LogicTests
     [TestClass]
     public class BallsManagerTest
     {
-        private readonly LogicAbstractAPI _ballsManager = new BallsManager(100, 100);
+        private readonly LogicAbstractAPI _ballsManager = LogicAbstractAPI.CreateApi(100, 100);
 
         [TestInitialize]
         public void Init()
         {
-            Assert.AreEqual(0, _ballsManager.GetAllBalls().Length);
+            Assert.AreEqual(0, _ballsManager.GetAllBalls().Count);
         }
 
         [TestMethod]
         public void CreateBallTest()
         {
-            _ballsManager.CreateBall(10, 20, 1,2);
-            Assert.AreEqual(1, _ballsManager.GetAllBalls().Length);
+            _ballsManager.CreateBall(10, 20, 1, 2);
+            Assert.AreEqual(1, _ballsManager.GetAllBalls().Count);
         }
 
         [DataTestMethod]
@@ -37,23 +36,23 @@ namespace Tests.LogicTests
         public void CreateBallNegativeTest(int x, int y, int xSpeed, int ySpeed)
         {
             Assert.ThrowsException<ArgumentException>(() => _ballsManager.CreateBall(x, y, xSpeed, ySpeed));
-            Assert.AreEqual(0, _ballsManager.GetAllBalls().Length);
+            Assert.AreEqual(0, _ballsManager.GetAllBalls().Count);
         }
 
         [TestMethod]
         public void CreateBallInRandomPlaceTest()
         {
             _ballsManager.CreateBallInRandomPlace();
-            Assert.AreEqual(1, _ballsManager.GetAllBalls().Length);
+            Assert.AreEqual(1, _ballsManager.GetAllBalls().Count);
         }
 
         [TestMethod]
         public void RemoveAllBallsTest()
         {
             _ballsManager.CreateBallInRandomPlace();
-            Assert.AreEqual(1, _ballsManager.GetAllBalls().Length);
+            Assert.AreEqual(1, _ballsManager.GetAllBalls().Count);
             _ballsManager.RemoveAllBalls();
-            Assert.AreEqual(0, _ballsManager.GetAllBalls().Length);
+            Assert.AreEqual(0, _ballsManager.GetAllBalls().Count);
         }
 
         [DataTestMethod]

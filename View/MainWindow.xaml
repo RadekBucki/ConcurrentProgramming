@@ -19,8 +19,7 @@
             FontSize="20"
             HorizontalAlignment="Left"
             Margin="10,167,0,0"
-            VerticalAlignment="Top"
-            x:Name="HelloWorld" />
+            VerticalAlignment="Top" />
         <Button
             Command="{Binding StartCommand}"
             Content="Start"
@@ -29,8 +28,7 @@
             HorizontalAlignment="Left"
             Margin="30,107,0,0"
             VerticalAlignment="Top"
-            Width="108"
-            x:Name="StartButton" />
+            Width="108" />
         <TextBox
             FontSize="20"
             HorizontalAlignment="Left"
@@ -60,7 +58,7 @@
             Width="108" />
         <ItemsControl
             Height="580"
-            ItemsSource="{Binding Balls}"
+            ItemsSource="{Binding Circles}"
             Margin="180,0,0,0"
             Width="580">
             <ItemsControl.ItemsPanel>
@@ -70,15 +68,17 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemContainerStyle>
                 <Style TargetType="ContentPresenter">
-                    <Setter Property="Canvas.Left" Value="{Binding XPosition}" />
-                    <Setter Property="Canvas.Top" Value="{Binding YPosition}" />
+                    <Setter Property="Canvas.Left" Value="{Binding X}" />
+                    <Setter Property="Canvas.Top" Value="{Binding Y}" />
                 </Style>
             </ItemsControl.ItemContainerStyle>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Path Fill="Green">
                         <Path.Data>
-                            <EllipseGeometry RadiusX="{Binding Radius}" RadiusY="{Binding Radius}" />
+                            <EllipseGeometry
+                                RadiusX="{Binding Radius}"
+                                RadiusY="{Binding Radius}" />
                         </Path.Data>
                     </Path>
                 </DataTemplate>
