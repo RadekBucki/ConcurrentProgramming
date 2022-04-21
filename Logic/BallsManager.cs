@@ -1,16 +1,20 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using Data;
 
 namespace Logic
 {
-    public class BallsManager : LogicAbstractAPI
+    internal class BallsManager : LogicAbstractAPI
     {
         private readonly int _boardWidth;
         private readonly int _boardHeight;
         private readonly int _ballRadius;
         private readonly DataAbstractAPI _dataLayer;
         private Timer? _movementTimer;
+        private const int MaxBallSpeed = 5;
+        private const int BoardToBallRatio = 50;
+        private List<IBall> _balls = new();
 
         public BallsManager(int boardWidth, int boardHeight) : this(boardWidth, boardHeight, DataAbstractAPI.CreateApi())
         {
@@ -20,11 +24,11 @@ namespace Logic
         {
             _boardWidth = boardWidth;
             _boardHeight = boardHeight;
-            _ballRadius = Math.Min(boardHeight, boardWidth) / 50;
+            _ballRadius = Math.Min(boardHeight, boardWidth) / BoardToBallRatio;
             _dataLayer = dataLayer;
         }
 
-        public override Ball CreateBall(int x, int y, int xSpeed, int ySpeed)
+        public override IBall CreateBall(int x, int y, int xSpeed, int ySpeed)
         {
             if (
                 x < _ballRadius || x > _boardWidth - _ballRadius ||
@@ -36,30 +40,30 @@ namespace Logic
                 throw new ArgumentException("Coordinate out of board range.");
             }
 
-            Ball ball = new(x, y, _ballRadius, xSpeed, ySpeed);
-            _dataLayer.Add(ball);
+            IBall ball = IBall.CreateBall(x, y, _ballRadius, xSpeed, ySpeed);
+            _balls.Add(ball);
             return ball;
         }
 
-        public override Ball CreateBallInRandomPlace()
+        public override IBall CreateBallInRandomPlace()
         {
             Random r = new();
 
             return CreateBall(
                 r.Next(_ballRadius, _boardWidth - _ballRadius), r.Next(_ballRadius, _boardHeight - _ballRadius),
-                r.Next(-5, 5),
-                r.Next(-5, 5)
+                r.Next(-MaxBallSpeed, MaxBallSpeed),
+                r.Next(-MaxBallSpeed, MaxBallSpeed)
             );
         }
 
-        public override Ball[] GetAllBalls()
+        public override List<IBall> GetAllBalls()
         {
-            return _dataLayer.GetBalls();
+            return _balls;
         }
 
         public override void RemoveAllBalls()
         {
-            _dataLayer.Clear();
+            _balls.Clear();
         }
 
         public override void StartBalls()
@@ -74,22 +78,20 @@ namespace Logic
 
         public override void MoveBallsAccordingToSpeed(Object? stateInfo)
         {
-            foreach (var ball in _dataLayer.GetBalls())
+            foreach (IBall ball in _balls.ToArray())
             {
                 if (ball.XPosition + ball.XSpeed >= _boardWidth - _ballRadius ||
                     ball.XPosition + ball.XSpeed <= _ballRadius)
                 {
-                    ball.XSpeed *= -1;
+                    ball.ChangeXSense();
                 }
 
                 if (ball.YPosition + ball.YSpeed >= _boardHeight - _ballRadius ||
                     ball.YPosition + ball.YSpeed <= _ballRadius)
                 {
-                    ball.YSpeed *= -1;
+                    ball.ChangeYSense();
                 }
-
-                ball.XPosition += ball.XSpeed;
-                ball.YPosition += ball.YSpeed;
+                ball.Move();
             }
         }
     }
