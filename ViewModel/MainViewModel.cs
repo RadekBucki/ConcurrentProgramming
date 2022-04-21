@@ -1,35 +1,37 @@
 ﻿using Presentation.Model;
 using Presentation.ViewModel.MVVMCore;
-using Data;
 
 namespace Presentation.ViewModel
 {
     public class MainViewModel : BaseViewModel
     {
+        private readonly ModelAbstractAPI _modelLayer;
         private bool _buttonEnabled = true;
-        private string _numOfBalls;
+        private string _numOfBalls = "";
         private Timer? _refreshTimer;
 
-        public MainViewModel()
+        public MainViewModel() : this(ModelAbstractAPI.CreateApi())
+        {
+        }
+        
+        public MainViewModel(ModelAbstractAPI modelLayer)
         {
             StartCommand = new RelayCommand(StartBalls, CanDoDisableButton);
             StopCommand = new RelayCommand(StopBalls, CanDoEnableButton);
-            _numOfBalls = "";
-            MainModel = new MainModel();
+            _modelLayer = modelLayer;
         }
 
         public RelayCommand StartCommand { get; }
 
         public RelayCommand StopCommand { get; }
-
-
+        
         public bool ButtonEnabled
         {
             get => _buttonEnabled;
             set
             {
                 _buttonEnabled = value;
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
@@ -39,15 +41,13 @@ namespace Presentation.ViewModel
             set
             {
                 _numOfBalls = value;
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
-        public MainModel MainModel { get; }
-
-        public Ball[]? Balls
+        public Object[]? Balls
         {
-            get => MainModel.GetBallsArray();
+            get => _modelLayer.GetBallsArray();
         }
 
         private void StartBalls()
@@ -60,38 +60,38 @@ namespace Presentation.ViewModel
                     throw new ArgumentException("Not an positive integer");
                 }
 
-                MainModel.CreateNBallsInRandomPlaces(ballsNum);
-                OnPropertyChanged("Balls");
-                MainModel.StartBallsMovement();
+                _modelLayer.CreateNBallsInRandomPlaces(ballsNum);
+                RaisePropertyChanged("Balls");
+                _modelLayer.StartBallsMovement();
                 _refreshTimer = new Timer(RefreshBalls, null, 0, 8);
                 DoChangeButtonEnabled();
             }
             catch (Exception)
             {
                 NumOfBalls = "";
-                OnPropertyChanged();
+                RaisePropertyChanged();
             }
         }
 
         private void StopBalls()
         {
-            MainModel.ClearBalls();
-            OnPropertyChanged("Balls");
-            MainModel.StopBallsMovement();
+            _modelLayer.ClearBalls();
+            RaisePropertyChanged("Balls");
+            _modelLayer.StopBallsMovement();
             _refreshTimer?.Dispose();
             DoChangeButtonEnabled();
         }
 
         private void RefreshBalls(Object? stateInfo)
         {
-            OnPropertyChanged("Balls");
+            RaisePropertyChanged("Balls");
         }
 
         private void DoChangeButtonEnabled()
         {
             ButtonEnabled = !ButtonEnabled;
-            StartCommand.OnCanExecuteChanged();
-            StopCommand.OnCanExecuteChanged();
+            StartCommand.RaiseCanExecuteChanged();
+            StopCommand.RaiseCanExecuteChanged();
         }
 
         private bool CanDoDisableButton()

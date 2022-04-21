@@ -1,42 +1,50 @@
-using Data;
 using Logic;
 
 namespace Presentation.Model;
 
-public class MainModel
+public class MainModel : ModelAbstractAPI
 {
-    private readonly BallsManager _ballsManager = new(580, 580);
+    private readonly LogicAbstractAPI _logicLayer;
 
-    public Ball[] GetBallsArray()
+    public MainModel() : this(LogicAbstractAPI.CreateApi(580, 580))
     {
-        return _ballsManager.GetAllBalls();
     }
 
-    public Ball CreateBallInRandomPlace()
+    public MainModel(LogicAbstractAPI logicLayer)
     {
-        return _ballsManager.CreateBallInRandomPlace();
+        _logicLayer = logicLayer;
     }
 
-    public void CreateNBallsInRandomPlaces(int numOfBalls)
+    public override Object[] GetBallsArray()
+    {
+        return _logicLayer.GetAllBalls();
+    }
+
+    public override Object CreateBallInRandomPlace()
+    {
+        return _logicLayer.CreateBallInRandomPlace();
+    }
+
+    public override void CreateNBallsInRandomPlaces(int numOfBalls)
     {
         for (int i = 0; i < numOfBalls; i++)
         {
-            _ballsManager.CreateBallInRandomPlace();
+            _logicLayer.CreateBallInRandomPlace();
         }
     }
 
-    public void ClearBalls()
+    public override void ClearBalls()
     {
-        _ballsManager.RemoveAllBalls();
+        _logicLayer.RemoveAllBalls();
     }
 
-    public void StartBallsMovement()
+    public override void StartBallsMovement()
     {
-        _ballsManager.StartBalls();
+        _logicLayer.StartBalls();
     }
 
-    public void StopBallsMovement()
+    public override void StopBallsMovement()
     {
-        _ballsManager.StopBalls();
+        _logicLayer.StopBalls();
     }
 }

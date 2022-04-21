@@ -1,5 +1,3 @@
-using System.Drawing;
-
 namespace Data
 {
     public class Ball

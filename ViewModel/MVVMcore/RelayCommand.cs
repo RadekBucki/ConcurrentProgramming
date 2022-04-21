@@ -27,7 +27,7 @@ namespace Presentation.ViewModel.MVVMCore
 
         public event EventHandler? CanExecuteChanged;
 
-        internal void OnCanExecuteChanged()
+        internal void RaiseCanExecuteChanged()
         {
             CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }

@@ -1,26 +1,30 @@
 using System;
 using System.Threading;
-using System.Threading.Tasks;
 using Data;
 
 namespace Logic
 {
-    public class BallsManager
+    public class BallsManager : LogicAbstractAPI
     {
         private readonly int _boardWidth;
         private readonly int _boardHeight;
         private readonly int _ballRadius;
-        private readonly BallsRepository _ballsRepository = new();
+        private readonly DataAbstractAPI _dataLayer;
         private Timer? _movementTimer;
 
-        public BallsManager(int boardWidth, int boardHeight)
+        public BallsManager(int boardWidth, int boardHeight) : this(boardWidth, boardHeight, DataAbstractAPI.CreateApi())
+        {
+        }
+
+        public BallsManager(int boardWidth, int boardHeight, DataAbstractAPI dataLayer)
         {
             _boardWidth = boardWidth;
             _boardHeight = boardHeight;
             _ballRadius = Math.Min(boardHeight, boardWidth) / 50;
+            _dataLayer = dataLayer;
         }
 
-        public Ball CreateBall(int x, int y, int xSpeed, int ySpeed)
+        public override Ball CreateBall(int x, int y, int xSpeed, int ySpeed)
         {
             if (
                 x < _ballRadius || x > _boardWidth - _ballRadius ||
@@ -33,11 +37,11 @@ namespace Logic
             }
 
             Ball ball = new(x, y, _ballRadius, xSpeed, ySpeed);
-            _ballsRepository.Add(ball);
+            _dataLayer.Add(ball);
             return ball;
         }
 
-        public Ball CreateBallInRandomPlace()
+        public override Ball CreateBallInRandomPlace()
         {
             Random r = new();
 
@@ -48,29 +52,29 @@ namespace Logic
             );
         }
 
-        public Ball[] GetAllBalls()
+        public override Ball[] GetAllBalls()
         {
-            return _ballsRepository.GetBalls();
+            return _dataLayer.GetBalls();
         }
 
-        public void RemoveAllBalls()
+        public override void RemoveAllBalls()
         {
-            _ballsRepository.Clear();
+            _dataLayer.Clear();
         }
 
-        public void StartBalls()
+        public override void StartBalls()
         {
             _movementTimer = new Timer(MoveBallsAccordingToSpeed, null, 0, 8);
         }
 
-        public void StopBalls()
+        public override void StopBalls()
         {
             _movementTimer?.Dispose();
         }
 
-        public void MoveBallsAccordingToSpeed(Object? stateInfo)
+        public override void MoveBallsAccordingToSpeed(Object? stateInfo)
         {
-            foreach (var ball in _ballsRepository.GetBalls())
+            foreach (var ball in _dataLayer.GetBalls())
             {
                 if (ball.XPosition + ball.XSpeed >= _boardWidth - _ballRadius ||
                     ball.XPosition + ball.XSpeed <= _ballRadius)

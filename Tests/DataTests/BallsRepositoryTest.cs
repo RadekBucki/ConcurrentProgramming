@@ -9,10 +9,13 @@ namespace Tests.DataTests
         [TestMethod]
         public void AddBallToRepositoryTest()
         {
-            BallsRepository ballsRepository = new();
+            DataAbstractAPI ballsRepository = new BallsRepository();
             Assert.AreEqual(0, ballsRepository.GetBalls().Length);
-            ballsRepository.Add(new Ball(1, 2, 1));
+            Ball b = new Ball(1, 2, 1);
+            ballsRepository.Add(b);
             Assert.AreEqual(1, ballsRepository.GetBalls().Length);
+            ballsRepository.Remove(b);
+            Assert.AreEqual(0, ballsRepository.GetBalls().Length);
         }
     }
 }
