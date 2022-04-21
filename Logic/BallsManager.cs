@@ -9,14 +9,19 @@ namespace Logic
         private readonly int _boardWidth;
         private readonly int _boardHeight;
         private readonly int _ballRadius;
-        private readonly DataAbstractAPI _ballsRepository = new BallsRepository();
+        private readonly DataAbstractAPI _dataLayer;
         private Timer? _movementTimer;
 
-        public BallsManager(int boardWidth, int boardHeight)
+        public BallsManager(int boardWidth, int boardHeight) : this(boardWidth, boardHeight, DataAbstractAPI.CreateApi())
+        {
+        }
+
+        public BallsManager(int boardWidth, int boardHeight, DataAbstractAPI dataLayer)
         {
             _boardWidth = boardWidth;
             _boardHeight = boardHeight;
             _ballRadius = Math.Min(boardHeight, boardWidth) / 50;
+            _dataLayer = dataLayer;
         }
 
         public override Ball CreateBall(int x, int y, int xSpeed, int ySpeed)
@@ -32,7 +37,7 @@ namespace Logic
             }
 
             Ball ball = new(x, y, _ballRadius, xSpeed, ySpeed);
-            _ballsRepository.Add(ball);
+            _dataLayer.Add(ball);
             return ball;
         }
 
@@ -49,12 +54,12 @@ namespace Logic
 
         public override Ball[] GetAllBalls()
         {
-            return _ballsRepository.GetBalls();
+            return _dataLayer.GetBalls();
         }
 
         public override void RemoveAllBalls()
         {
-            _ballsRepository.Clear();
+            _dataLayer.Clear();
         }
 
         public override void StartBalls()
@@ -69,7 +74,7 @@ namespace Logic
 
         public override void MoveBallsAccordingToSpeed(Object? stateInfo)
         {
-            foreach (var ball in _ballsRepository.GetBalls())
+            foreach (var ball in _dataLayer.GetBalls())
             {
                 if (ball.XPosition + ball.XSpeed >= _boardWidth - _ballRadius ||
                     ball.XPosition + ball.XSpeed <= _ballRadius)

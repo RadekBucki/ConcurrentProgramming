@@ -1,28 +1,30 @@
 ﻿using Presentation.Model;
 using Presentation.ViewModel.MVVMCore;
-using Data;
 
 namespace Presentation.ViewModel
 {
     public class MainViewModel : BaseViewModel
     {
+        private readonly ModelAbstractAPI _modelLayer;
         private bool _buttonEnabled = true;
-        private string _numOfBalls;
+        private string _numOfBalls = "";
         private Timer? _refreshTimer;
 
-        public MainViewModel()
+        public MainViewModel() : this(ModelAbstractAPI.CreateApi())
+        {
+        }
+        
+        public MainViewModel(ModelAbstractAPI modelLayer)
         {
             StartCommand = new RelayCommand(StartBalls, CanDoDisableButton);
             StopCommand = new RelayCommand(StopBalls, CanDoEnableButton);
-            _numOfBalls = "";
-            MainModel = new MainModel();
+            _modelLayer = modelLayer;
         }
 
         public RelayCommand StartCommand { get; }
 
         public RelayCommand StopCommand { get; }
-
-
+        
         public bool ButtonEnabled
         {
             get => _buttonEnabled;
@@ -43,11 +45,9 @@ namespace Presentation.ViewModel
             }
         }
 
-        public MainModel MainModel { get; }
-
-        public Ball[]? Balls
+        public Object[]? Balls
         {
-            get => MainModel.GetBallsArray();
+            get => _modelLayer.GetBallsArray();
         }
 
         private void StartBalls()
@@ -60,9 +60,9 @@ namespace Presentation.ViewModel
                     throw new ArgumentException("Not an positive integer");
                 }
 
-                MainModel.CreateNBallsInRandomPlaces(ballsNum);
+                _modelLayer.CreateNBallsInRandomPlaces(ballsNum);
                 RaisePropertyChanged("Balls");
-                MainModel.StartBallsMovement();
+                _modelLayer.StartBallsMovement();
                 _refreshTimer = new Timer(RefreshBalls, null, 0, 8);
                 DoChangeButtonEnabled();
             }
@@ -75,9 +75,9 @@ namespace Presentation.ViewModel
 
         private void StopBalls()
         {
-            MainModel.ClearBalls();
+            _modelLayer.ClearBalls();
             RaisePropertyChanged("Balls");
-            MainModel.StopBallsMovement();
+            _modelLayer.StopBallsMovement();
             _refreshTimer?.Dispose();
             DoChangeButtonEnabled();
         }
