@@ -5,27 +5,22 @@ using Data;
 
 namespace Logic
 {
-    internal class BallsManager : LogicAbstractAPI
+    internal class BallsManager : LogicAbstractApi
     {
         private readonly int _boardWidth;
         private readonly int _boardHeight;
         private readonly int _ballRadius;
-        private readonly DataAbstractAPI _dataLayer;
         private Timer? _movementTimer;
         private const int MaxBallSpeed = 5;
         private const int BoardToBallRatio = 50;
         private List<IBall> _balls = new();
 
-        public BallsManager(int boardWidth, int boardHeight) : this(boardWidth, boardHeight, DataAbstractAPI.CreateApi())
-        {
-        }
-
-        public BallsManager(int boardWidth, int boardHeight, DataAbstractAPI dataLayer)
+        public BallsManager(int boardWidth, int boardHeight, DataAbstractApi? dataLayer)
         {
             _boardWidth = boardWidth;
             _boardHeight = boardHeight;
             _ballRadius = Math.Min(boardHeight, boardWidth) / BoardToBallRatio;
-            _dataLayer = dataLayer;
+            DataLayer = dataLayer;
         }
 
         public override IBall CreateBall(int x, int y, int xSpeed, int ySpeed)

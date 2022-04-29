@@ -1,13 +1,15 @@
 using System.Collections.ObjectModel;
+using Logic;
 
 namespace Presentation.Model
 {
 
-    public abstract class ModelAbstractAPI
+    public abstract class ModelAbstractApi
     {
-        public static ModelAbstractAPI CreateApi()
+        protected LogicAbstractApi LogicLayer;
+        public static ModelAbstractApi CreateApi(LogicAbstractApi? logicLayer = null)
         {
-            return new MainModel();
+            return new MainModel(logicLayer ?? LogicAbstractApi.CreateApi(580, 580));
         }
 
         public abstract ObservableCollection<ICircle> GetCircles();

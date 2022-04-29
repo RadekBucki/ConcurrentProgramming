@@ -1,7 +1,7 @@
 using Logic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Tests.DataTests
+namespace LogicTests
 {
     [TestClass]
     public class BallTest

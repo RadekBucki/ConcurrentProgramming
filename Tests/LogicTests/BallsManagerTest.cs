@@ -4,12 +4,14 @@ using Logic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
-namespace Tests.LogicTests
+namespace LogicTests
 {
     [TestClass]
     public class BallsManagerTest
     {
-        private readonly LogicAbstractAPI _ballsManager = LogicAbstractAPI.CreateApi(100, 100);
+        private readonly LogicAbstractApi? _ballsManager = LogicAbstractApi.CreateApi(
+            100, 100, new TestData()
+        );
 
         [TestInitialize]
         public void Init()

@@ -4,24 +4,19 @@ using Logic;
 
 namespace Presentation.Model;
 
-internal class MainModel : ModelAbstractAPI
+internal class MainModel : ModelAbstractApi
 {
-    private readonly LogicAbstractAPI _logicLayer;
     private ObservableCollection<ICircle> Circles = new();
 
-    public MainModel() : this(LogicAbstractAPI.CreateApi(580, 580))
+    public MainModel(LogicAbstractApi logicLayer)
     {
-    }
-
-    public MainModel(LogicAbstractAPI logicLayer)
-    {
-        _logicLayer = logicLayer;
+        LogicLayer = logicLayer;
     }
 
     public override ObservableCollection<ICircle> GetCircles()
     {
         Circles.Clear();
-        foreach (IBall ball in _logicLayer.GetAllBalls())
+        foreach (IBall ball in LogicLayer.GetAllBalls())
         {
             ICircle c = ICircle.CreateCircle(ball.XPosition, ball.YPosition, ball.Radius);
             Circles.Add(c);
@@ -33,29 +28,29 @@ internal class MainModel : ModelAbstractAPI
 
     public override void CreateBallInRandomPlace()
     {
-        _logicLayer.CreateBallInRandomPlace();
+        LogicLayer.CreateBallInRandomPlace();
     }
 
     public override void CreateNBallsInRandomPlaces(int numOfBalls)
     {
         for (int i = 0; i < numOfBalls; i++)
         {
-            _logicLayer.CreateBallInRandomPlace();
+            LogicLayer.CreateBallInRandomPlace();
         }
     }
 
     public override void ClearBalls()
     {
-        _logicLayer.RemoveAllBalls();
+        LogicLayer.RemoveAllBalls();
     }
 
     public override void StartBallsMovement()
     {
-        _logicLayer.StartBalls();
+        LogicLayer.StartBalls();
     }
 
     public override void StopBallsMovement()
     {
-        _logicLayer.StopBalls();
+        LogicLayer.StopBalls();
     }
 }

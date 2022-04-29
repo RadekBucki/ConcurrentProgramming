@@ -2,17 +2,15 @@ using System;
 using Data;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Tests.DataTests;
-
-public class DataTest
+namespace DataTests
 {
     [TestClass]
-    public class BallsRepositoryTest
+    public class DataTest
     {
         [TestMethod]
         public void CreateBallNegativeTest()
         {
-            DataAbstractAPI dataLayer = DataAbstractAPI.CreateApi();
+            DataAbstractApi? dataLayer = DataAbstractApi.CreateApi();
             Assert.ThrowsException<NotImplementedException>(() => dataLayer.Connect());
         }
     }

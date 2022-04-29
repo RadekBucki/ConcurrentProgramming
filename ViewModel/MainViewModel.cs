@@ -6,15 +6,15 @@ namespace Presentation.ViewModel
 {
     public class MainViewModel : BaseViewModel
     {
-        private readonly ModelAbstractAPI _modelLayer;
+        private readonly ModelAbstractApi _modelLayer;
         private bool _buttonEnabled = true;
         private string _numOfBalls = "";
 
-        public MainViewModel() : this(ModelAbstractAPI.CreateApi())
+        public MainViewModel() : this(ModelAbstractApi.CreateApi())
         {
         }
 
-        public MainViewModel(ModelAbstractAPI modelLayer)
+        public MainViewModel(ModelAbstractApi modelLayer)
         {
             StartCommand = new RelayCommand(StartBalls, CanDoDisableButton);
             StopCommand = new RelayCommand(StopBalls, CanDoEnableButton);
