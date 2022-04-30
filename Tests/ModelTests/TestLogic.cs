@@ -13,6 +13,9 @@ namespace ModelTests
         private Timer? _movementTimer;
         private const int MaxBallSpeed = 5;
         private const int BoardToBallRatio = 50;
+        private const int MaxBallWeight = 5;
+        private const int MinBallWeight = 1;
+        private const int BallWeight= 100;
         private List<IBall> _balls = new();
 
         public TestLogic(int boardWidth, int boardHeight)
@@ -33,8 +36,7 @@ namespace ModelTests
             {
                 throw new ArgumentException("Coordinate out of board range.");
             }
-
-            IBall ball = IBall.CreateBall(x, y, _ballRadius, xSpeed, ySpeed);
+            IBall ball = IBall.CreateBall(x, y, _ballRadius, BallWeight, xSpeed, ySpeed);
             _balls.Add(ball);
             return ball;
         }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -59,6 +60,8 @@ namespace Logic
                 RaisePropertyChanged();
             }
         }
+        public override int Weight { get; set; }
+        public override List<IBall> InCollisionWithBall { get; set; }
 
         public override void ChangeXSense()
         {
@@ -76,13 +79,15 @@ namespace Logic
             YPosition += YSpeed;
         }
 
-        public Ball(int xPosition, int yPosition, int radius, int xSpeed = 0, int ySpeed = 0)
+        public Ball(int xPosition, int yPosition, int radius, int weight, int xSpeed = 0, int ySpeed = 0)
         {
             XPosition = xPosition;
             YPosition = yPosition;
             XSpeed = xSpeed;
             YSpeed = ySpeed;
             Radius = radius;
+            Weight = weight;
+            InCollisionWithBall = new List<IBall>();
         }
 
         private void RaisePropertyChanged([CallerMemberName] string? propertyName = null)
