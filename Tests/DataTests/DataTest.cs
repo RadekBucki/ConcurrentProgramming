@@ -11,7 +11,7 @@ namespace DataTests
         public void CreateBallNegativeTest()
         {
             DataAbstractApi? dataLayer = DataAbstractApi.CreateApi();
-            Assert.ThrowsException<NotImplementedException>(() => dataLayer.Connect());
+            Assert.ThrowsException<NotImplementedException>(() => dataLayer?.Connect());
         }
     }
 }

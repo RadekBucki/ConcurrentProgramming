@@ -55,7 +55,7 @@ namespace Presentation.ViewModel
             try
             {
                 int ballsNum = int.Parse(NumOfBalls);
-                if (ballsNum < 0)
+                if (ballsNum <= 0)
                 {
                     throw new ArgumentException("Not an positive integer");
                 }
@@ -74,7 +74,7 @@ namespace Presentation.ViewModel
 
         private void StopBalls()
         {
-            _modelLayer.ClearBalls();
+            _modelLayer.ClearCircles();
             RaisePropertyChanged("Circles");
             _modelLayer.StopBallsMovement();
             DoChangeButtonEnabled();

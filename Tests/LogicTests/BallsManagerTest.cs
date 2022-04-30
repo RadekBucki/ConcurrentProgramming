@@ -7,9 +7,9 @@ using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 namespace LogicTests
 {
     [TestClass]
-    public class BallsManagerTest
+    internal class BallsManagerTest
     {
-        private readonly LogicAbstractApi? _ballsManager = LogicAbstractApi.CreateApi(
+        private readonly LogicAbstractApi _ballsManager = LogicAbstractApi.CreateApi(
             100, 100, new TestData()
         );
 

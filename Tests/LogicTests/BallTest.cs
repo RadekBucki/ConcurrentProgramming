@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace LogicTests
 {
     [TestClass]
-    public class BallTest
+    internal class BallTest
     {
         private IBall _ball = IBall.CreateBall(1, 2, 1);
 

@@ -3,10 +3,10 @@ using Logic;
 
 namespace Presentation.Model
 {
-
     public abstract class ModelAbstractApi
     {
         protected LogicAbstractApi LogicLayer;
+
         public static ModelAbstractApi CreateApi(LogicAbstractApi? logicLayer = null)
         {
             return new MainModel(logicLayer ?? LogicAbstractApi.CreateApi(580, 580));
@@ -18,7 +18,7 @@ namespace Presentation.Model
 
         public abstract void CreateNBallsInRandomPlaces(int numOfBalls);
 
-        public abstract void ClearBalls();
+        public abstract void ClearCircles();
 
         public abstract void StartBallsMovement();
 

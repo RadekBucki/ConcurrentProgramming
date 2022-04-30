@@ -1,56 +1,56 @@
 using System.Collections.ObjectModel;
-using Data;
 using Logic;
 
-namespace Presentation.Model;
-
-internal class MainModel : ModelAbstractApi
+namespace Presentation.Model
 {
-    private ObservableCollection<ICircle> Circles = new();
-
-    public MainModel(LogicAbstractApi logicLayer)
+    internal class MainModel : ModelAbstractApi
     {
-        LogicLayer = logicLayer;
-    }
+        private ObservableCollection<ICircle> Circles = new();
 
-    public override ObservableCollection<ICircle> GetCircles()
-    {
-        Circles.Clear();
-        foreach (IBall ball in LogicLayer.GetAllBalls())
+        public MainModel(LogicAbstractApi logicLayer)
         {
-            ICircle c = ICircle.CreateCircle(ball.XPosition, ball.YPosition, ball.Radius);
-            Circles.Add(c);
-            ball.PropertyChanged += c.UpdateCircle!;
+            LogicLayer = logicLayer;
         }
 
-        return Circles;
-    }
+        public override ObservableCollection<ICircle> GetCircles()
+        {
+            Circles.Clear();
+            foreach (IBall ball in LogicLayer.GetAllBalls())
+            {
+                ICircle c = ICircle.CreateCircle(ball.XPosition, ball.YPosition, ball.Radius);
+                Circles.Add(c);
+                ball.PropertyChanged += c.UpdateCircle!;
+            }
 
-    public override void CreateBallInRandomPlace()
-    {
-        LogicLayer.CreateBallInRandomPlace();
-    }
+            return Circles;
+        }
 
-    public override void CreateNBallsInRandomPlaces(int numOfBalls)
-    {
-        for (int i = 0; i < numOfBalls; i++)
+        public override void CreateBallInRandomPlace()
         {
             LogicLayer.CreateBallInRandomPlace();
         }
-    }
 
-    public override void ClearBalls()
-    {
-        LogicLayer.RemoveAllBalls();
-    }
+        public override void CreateNBallsInRandomPlaces(int numOfBalls)
+        {
+            for (int i = 0; i < numOfBalls; i++)
+            {
+                LogicLayer.CreateBallInRandomPlace();
+            }
+        }
 
-    public override void StartBallsMovement()
-    {
-        LogicLayer.StartBalls();
-    }
+        public override void ClearCircles()
+        {
+            LogicLayer.RemoveAllBalls();
+        }
 
-    public override void StopBallsMovement()
-    {
-        LogicLayer.StopBalls();
+        public override void StartBallsMovement()
+        {
+            LogicLayer.StartBalls();
+        }
+
+        public override void StopBallsMovement()
+        {
+            LogicLayer.StopBalls();
+        }
     }
 }
