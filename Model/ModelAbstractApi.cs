@@ -5,8 +5,6 @@ namespace Presentation.Model
 {
     public abstract class ModelAbstractApi
     {
-        protected LogicAbstractApi LogicLayer;
-
         public static ModelAbstractApi CreateApi(LogicAbstractApi? logicLayer = null)
         {
             return new MainModel(logicLayer ?? LogicAbstractApi.CreateApi(580, 580));

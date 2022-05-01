@@ -4,7 +4,7 @@ using Presentation.Model;
 namespace ModelTests
 {
     [TestClass]
-    internal class MainModelTest
+    public class MainModelTest
     {
         private ModelAbstractApi _model = ModelAbstractApi.CreateApi(new TestLogic(10, 10));
 

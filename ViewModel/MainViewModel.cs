@@ -45,10 +45,7 @@ namespace Presentation.ViewModel
             }
         }
 
-        public ObservableCollection<ICircle> Circles
-        {
-            get => _modelLayer.GetCircles();
-        }
+        public ObservableCollection<ICircle> Circles => _modelLayer.GetCircles();
 
         private void StartBalls()
         {
@@ -61,7 +58,7 @@ namespace Presentation.ViewModel
                 }
 
                 _modelLayer.CreateNBallsInRandomPlaces(ballsNum);
-                RaisePropertyChanged("Circles");
+                RaisePropertyChanged(nameof(Circles));
                 _modelLayer.StartBallsMovement();
                 DoChangeButtonEnabled();
             }
@@ -75,7 +72,7 @@ namespace Presentation.ViewModel
         private void StopBalls()
         {
             _modelLayer.ClearCircles();
-            RaisePropertyChanged("Circles");
+            RaisePropertyChanged(nameof(Circles));
             _modelLayer.StopBallsMovement();
             DoChangeButtonEnabled();
         }

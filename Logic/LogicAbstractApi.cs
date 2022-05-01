@@ -6,7 +6,6 @@ namespace Logic
 {
     public abstract class LogicAbstractApi
     {
-        protected DataAbstractApi DataLayer;
         public static LogicAbstractApi CreateApi(int boardWidth, int boardHeight, DataAbstractApi? dataAbstractApi = null)
         {
             return new BallsManager(boardWidth, boardHeight, dataAbstractApi ?? DataAbstractApi.CreateApi());

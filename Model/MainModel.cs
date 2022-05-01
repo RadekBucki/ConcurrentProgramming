@@ -6,16 +6,17 @@ namespace Presentation.Model
     internal class MainModel : ModelAbstractApi
     {
         private ObservableCollection<ICircle> Circles = new();
+        private LogicAbstractApi _logicLayer;
 
         public MainModel(LogicAbstractApi logicLayer)
         {
-            LogicLayer = logicLayer;
+            _logicLayer = logicLayer;
         }
 
         public override ObservableCollection<ICircle> GetCircles()
         {
             Circles.Clear();
-            foreach (IBall ball in LogicLayer.GetAllBalls())
+            foreach (IBall ball in _logicLayer.GetAllBalls())
             {
                 ICircle c = ICircle.CreateCircle(ball.XPosition, ball.YPosition, ball.Radius);
                 Circles.Add(c);
@@ -27,30 +28,30 @@ namespace Presentation.Model
 
         public override void CreateBallInRandomPlace()
         {
-            LogicLayer.CreateBallInRandomPlace();
+            _logicLayer.CreateBallInRandomPlace();
         }
 
         public override void CreateNBallsInRandomPlaces(int numOfBalls)
         {
             for (int i = 0; i < numOfBalls; i++)
             {
-                LogicLayer.CreateBallInRandomPlace();
+                _logicLayer.CreateBallInRandomPlace();
             }
         }
 
         public override void ClearCircles()
         {
-            LogicLayer.RemoveAllBalls();
+            _logicLayer.RemoveAllBalls();
         }
 
         public override void StartBallsMovement()
         {
-            LogicLayer.StartBalls();
+            _logicLayer.StartBalls();
         }
 
         public override void StopBallsMovement()
         {
-            LogicLayer.StopBalls();
+            _logicLayer.StopBalls();
         }
     }
 }

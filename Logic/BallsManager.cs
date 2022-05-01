@@ -10,6 +10,7 @@ namespace Logic
         private readonly int _boardWidth;
         private readonly int _boardHeight;
         private readonly int _ballRadius;
+        private DataAbstractApi _dataLayer;
         private Timer? _movementTimer;
         private const int MaxBallSpeed = 5;
         private const int BoardToBallRatio = 50;
@@ -20,7 +21,7 @@ namespace Logic
             _boardWidth = boardWidth;
             _boardHeight = boardHeight;
             _ballRadius = Math.Min(boardHeight, boardWidth) / BoardToBallRatio;
-            DataLayer = dataLayer;
+            _dataLayer = dataLayer;
         }
 
         public override IBall CreateBall(int x, int y, int xSpeed, int ySpeed)

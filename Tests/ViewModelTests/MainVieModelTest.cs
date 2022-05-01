@@ -1,12 +1,10 @@
-using System;
-using System.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Presentation.ViewModel;
 
 namespace ViewModelTests
 {
     [TestClass]
-    internal class MainVieModelTest
+    public class MainVieModelTest
     {
         private TestModel _testModel = new(10, 10);
         private MainViewModel? _mainViewModel;

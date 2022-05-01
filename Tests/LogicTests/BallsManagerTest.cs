@@ -2,12 +2,11 @@ using System;
 using System.Threading;
 using Logic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
 namespace LogicTests
 {
     [TestClass]
-    internal class BallsManagerTest
+    public class BallsManagerTest
     {
         private readonly LogicAbstractApi _ballsManager = LogicAbstractApi.CreateApi(
             100, 100, new TestData()
