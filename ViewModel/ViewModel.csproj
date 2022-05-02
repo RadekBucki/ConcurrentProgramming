@@ -11,4 +11,8 @@
       <ProjectReference Include="..\Model\Model.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="Annotations.cs" />
+    </ItemGroup>
+
 </Project>

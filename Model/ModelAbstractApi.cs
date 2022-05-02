@@ -1,13 +1,13 @@
 using System.Collections.ObjectModel;
+using Logic;
 
 namespace Presentation.Model
 {
-
-    public abstract class ModelAbstractAPI
+    public abstract class ModelAbstractApi
     {
-        public static ModelAbstractAPI CreateApi()
+        public static ModelAbstractApi CreateApi(LogicAbstractApi? logicLayer = null)
         {
-            return new MainModel();
+            return new MainModel(logicLayer ?? LogicAbstractApi.CreateApi(580, 580));
         }
 
         public abstract ObservableCollection<ICircle> GetCircles();
@@ -16,7 +16,7 @@ namespace Presentation.Model
 
         public abstract void CreateNBallsInRandomPlaces(int numOfBalls);
 
-        public abstract void ClearBalls();
+        public abstract void ClearCircles();
 
         public abstract void StartBallsMovement();
 

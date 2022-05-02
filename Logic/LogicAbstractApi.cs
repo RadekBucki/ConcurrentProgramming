@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
+using Data;
 
 namespace Logic
 {
-    public abstract class LogicAbstractAPI
+    public abstract class LogicAbstractApi
     {
-        public static LogicAbstractAPI CreateApi(int boardWidth, int boardHeight)
+        public static LogicAbstractApi CreateApi(int boardWidth, int boardHeight, DataAbstractApi? dataAbstractApi = null)
         {
-            return new BallsManager(boardWidth, boardHeight);
+            return new BallsManager(boardWidth, boardHeight, dataAbstractApi ?? DataAbstractApi.CreateApi());
         }
 
         public abstract IBall CreateBall(int x, int y, int xSpeed, int ySpeed);

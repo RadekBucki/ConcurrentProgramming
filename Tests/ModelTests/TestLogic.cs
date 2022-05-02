@@ -1,27 +1,25 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Data;
+using Logic;
 
-namespace Logic
+namespace ModelTests
 {
-    internal class BallsManager : LogicAbstractApi
+    internal class TestLogic : LogicAbstractApi
     {
         private readonly int _boardWidth;
         private readonly int _boardHeight;
         private readonly int _ballRadius;
-        private DataAbstractApi _dataLayer;
         private Timer? _movementTimer;
         private const int MaxBallSpeed = 5;
         private const int BoardToBallRatio = 50;
         private List<IBall> _balls = new();
 
-        public BallsManager(int boardWidth, int boardHeight, DataAbstractApi dataLayer)
+        public TestLogic(int boardWidth, int boardHeight)
         {
             _boardWidth = boardWidth;
             _boardHeight = boardHeight;
             _ballRadius = Math.Min(boardHeight, boardWidth) / BoardToBallRatio;
-            _dataLayer = dataLayer;
         }
 
         public override IBall CreateBall(int x, int y, int xSpeed, int ySpeed)

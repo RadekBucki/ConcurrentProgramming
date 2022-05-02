@@ -1,8 +1,8 @@
 namespace Data
 {
-    public abstract class DataAbstractAPI
+    public abstract class DataAbstractApi
     {
-        public static DataAbstractAPI CreateApi()
+        public static DataAbstractApi CreateApi()
         {
             return new BallsRepository();
         }
