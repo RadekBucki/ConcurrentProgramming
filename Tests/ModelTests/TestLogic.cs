@@ -34,7 +34,7 @@ namespace ModelTests
                 throw new ArgumentException("Coordinate out of board range.");
             }
 
-            IBall ball = IBall.CreateBall(x, y, _ballRadius, xSpeed, ySpeed);
+            IBall ball = IBall.CreateBall(x, y, _ballRadius, _ballRadius * 10, xSpeed, ySpeed);
             _balls.Add(ball);
             return ball;
         }
@@ -72,20 +72,21 @@ namespace ModelTests
 
         public override void MoveBallsAccordingToSpeed(Object? stateInfo)
         {
-            foreach (IBall ball in _balls.ToArray())
+            IBall[] balls = _balls.ToArray();
+            for (int i = 0; i < balls.Length; i++)
             {
-                if (ball.XPosition + ball.XSpeed >= _boardWidth - _ballRadius ||
-                    ball.XPosition + ball.XSpeed <= _ballRadius)
+                if (balls[i].XPosition + balls[i].XSpeed >= _boardWidth - _ballRadius ||
+                    balls[i].XPosition + balls[i].XSpeed <= _ballRadius)
                 {
-                    ball.ChangeXSense();
+                    throw new NotImplementedException();
                 }
 
-                if (ball.YPosition + ball.YSpeed >= _boardHeight - _ballRadius ||
-                    ball.YPosition + ball.YSpeed <= _ballRadius)
+                if (balls[i].YPosition + balls[i].YSpeed >= _boardHeight - _ballRadius ||
+                    balls[i].YPosition + balls[i].YSpeed <= _ballRadius)
                 {
-                    ball.ChangeYSense();
+                    throw new NotImplementedException();
                 }
-                ball.Move();
+                balls[i].Move();
             }
         }
     }

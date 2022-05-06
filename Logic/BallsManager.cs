@@ -35,8 +35,9 @@ namespace Logic
             {
                 throw new ArgumentException("Coordinate out of board range.");
             }
-
-            IBall ball = IBall.CreateBall(x, y, _ballRadius, xSpeed, ySpeed);
+            IBallData ballData = _dataLayer.CreateBallData(_ballRadius, _ballRadius * 10, xSpeed, ySpeed);
+            IBall ball = IBall.CreateBall(x, y, ballData.Radius, ballData.Weight, ballData.XSpeed, ballData.YSpeed);
+            ballData.PropertyChanged += ball.UpdateBall!;
             _balls.Add(ball);
             return ball;
         }
@@ -60,6 +61,7 @@ namespace Logic
         public override void RemoveAllBalls()
         {
             _balls.Clear();
+            _dataLayer.RemoveAllBalls();
         }
 
         public override void StartBalls()
@@ -74,20 +76,22 @@ namespace Logic
 
         public override void MoveBallsAccordingToSpeed(Object? stateInfo)
         {
-            foreach (IBall ball in _balls.ToArray())
+            IBall[] balls = _balls.ToArray();
+            IBallData[] dataBalls = _dataLayer.GetAllBalls().ToArray();
+            for (int i = 0; i < balls.Length; i++)
             {
-                if (ball.XPosition + ball.XSpeed >= _boardWidth - _ballRadius ||
-                    ball.XPosition + ball.XSpeed <= _ballRadius)
+                if (balls[i].XPosition + balls[i].XSpeed >= _boardWidth - _ballRadius ||
+                    balls[i].XPosition + balls[i].XSpeed <= _ballRadius)
                 {
-                    ball.ChangeXSense();
+                    dataBalls[i].ChangeXSense();
                 }
 
-                if (ball.YPosition + ball.YSpeed >= _boardHeight - _ballRadius ||
-                    ball.YPosition + ball.YSpeed <= _ballRadius)
+                if (balls[i].YPosition + balls[i].YSpeed >= _boardHeight - _ballRadius ||
+                    balls[i].YPosition + balls[i].YSpeed <= _ballRadius)
                 {
-                    ball.ChangeYSense();
+                    dataBalls[i].ChangeYSense();
                 }
-                ball.Move();
+                balls[i].Move();
             }
         }
     }
