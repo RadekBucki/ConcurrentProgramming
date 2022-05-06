@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Data;
 
@@ -37,20 +38,45 @@ namespace Logic
                 throw new ArgumentException("Coordinate out of board range.");
             }
 
-            IBall ball = IBall.CreateBall(x, y, _ballRadius, BallWeight, xSpeed, ySpeed);
-            _balls.Add(ball);
-            return ball;
+            if (_balls.Any(
+                    ball => Math.Abs(ball.XPosition - x) <= _ballRadius && Math.Abs(ball.YPosition - y) <= _ballRadius)
+               )
+            {
+                throw new ArgumentException("Another ball is already here");
+            }
+
+
+            IBall newBall = IBall.CreateBall(x, y, _ballRadius, BallWeight, xSpeed, ySpeed);
+            _balls.Add(newBall);
+            return newBall;
         }
 
         public override IBall CreateBallInRandomPlace()
         {
             Random r = new();
+            bool catched;
+            do
+            {
+                catched = false;
+                try
+                {
+                    return CreateBall(
+                        r.Next(_ballRadius, _boardWidth - _ballRadius), 
+                        r.Next(_ballRadius, _boardHeight - _ballRadius),
+                        r.Next(-MaxBallSpeed, MaxBallSpeed),
+                        r.Next(-MaxBallSpeed, MaxBallSpeed)
+                    );
+                }
+                catch (ArgumentException e)
+                {
+                    if (e.Message == "Another ball is already here")
+                    {
+                        catched = true;
+                    }
+                }
+            } while (catched);
 
-            return CreateBall(
-                r.Next(_ballRadius, _boardWidth - _ballRadius), r.Next(_ballRadius, _boardHeight - _ballRadius),
-                r.Next(-MaxBallSpeed, MaxBallSpeed),
-                r.Next(-MaxBallSpeed, MaxBallSpeed)
-            );
+            throw new Exception();
         }
 
         public override List<IBall> GetAllBalls()
@@ -79,6 +105,7 @@ namespace Logic
             {
                 WallReflection(ball);
                 BallReflection(ball);
+                ball.Move();
             }
         }
 
@@ -95,8 +122,6 @@ namespace Logic
             {
                 ball.ChangeYSense();
             }
-
-            ball.Move();
         }
 
         private void BallReflection(IBall ball1)
@@ -138,46 +163,49 @@ namespace Logic
 
                     if (ball1StartXSpeed * ball2StartXSpeed > 0)
                     {
-                        if (
-                            (ball1.XSpeed > 0 && ball1.XPosition > ball2.XPosition) ||
-                            (ball1.XSpeed < 0 && ball1.XPosition < ball2.XPosition)
-                        )
-                        {
-                            ball2.ChangeXSense();
-                        }
-                        else if (
-                            (ball1.XSpeed < 0 && ball1.XPosition < ball2.XPosition) ||
-                            (ball1.XSpeed > 0 && ball1.XPosition > ball2.XPosition)
-                        )
-                        {
-                            ball1.ChangeXSense();
-                        }
+                        ChangeXSenseToOpposite(ball1StartXSpeed, ball1, ball2);
                     }
 
                     if (ball1StartYSpeed * ball2StartYSpeed > 0)
                     {
-                        if (
-                            (ball1.YSpeed > 0 && ball1.YPosition > ball2.YPosition) ||
-                            (ball1.YSpeed < 0 && ball1.YPosition < ball2.YPosition)
-                        )
-                        {
-                            ball2.ChangeYSense();
-                        }
-                        else if (
-                            (ball1.YSpeed < 0 && ball1.YPosition < ball2.YPosition) ||
-                            (ball1.YSpeed > 0 && ball1.YPosition > ball2.YPosition)
-                        )
-                        {
-                            ball1.ChangeYSense();
-                        }
+                        ChangeYSenseToOpposite(ball1StartYSpeed, ball1, ball2);
                     }
 
-                    ball1.Move();
                     ball2.Move();
 
                     ball1.InCollisionWithBall.Remove(ball2);
                     ball2.InCollisionWithBall.Remove(ball1);
                 }
+            }
+        }
+
+        private static void ChangeYSenseToOpposite(int ball1StartYSpeed, IBall ball1, IBall ball2)
+        {
+            switch (ball1StartYSpeed)
+            {
+                case > 0 when ball1.YPosition > ball2.YPosition:
+                case < 0 when ball1.YPosition < ball2.YPosition:
+                    ball2.ChangeYSense();
+                    break;
+                case < 0 when ball1.YPosition < ball2.YPosition:
+                case > 0 when ball1.YPosition > ball2.YPosition:
+                    ball1.ChangeYSense();
+                    break;
+            }
+        }
+
+        private static void ChangeXSenseToOpposite(int ball1StartXSpeed, IBall ball1, IBall ball2)
+        {
+            switch (ball1StartXSpeed)
+            {
+                case > 0 when ball1.XPosition > ball2.XPosition:
+                case < 0 when ball1.XPosition < ball2.XPosition:
+                    ball2.ChangeXSense();
+                    break;
+                case < 0 when ball1.XPosition < ball2.XPosition:
+                case > 0 when ball1.XPosition > ball2.XPosition:
+                    ball1.ChangeXSense();
+                    break;
             }
         }
     }

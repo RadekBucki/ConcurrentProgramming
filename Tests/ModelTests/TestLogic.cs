@@ -13,8 +13,6 @@ namespace ModelTests
         private Timer? _movementTimer;
         private const int MaxBallSpeed = 5;
         private const int BoardToBallRatio = 50;
-        private const int MaxBallWeight = 5;
-        private const int MinBallWeight = 1;
         private const int BallWeight= 100;
         private List<IBall> _balls = new();
 
