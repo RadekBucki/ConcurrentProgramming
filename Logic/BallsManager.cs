@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading;
 using Data;
 
@@ -11,7 +12,6 @@ namespace Logic
         private readonly int _boardHeight;
         private readonly int _ballRadius;
         private DataAbstractApi _dataLayer;
-        private Timer? _movementTimer;
         private const int MaxBallSpeed = 5;
         private const int BoardToBallRatio = 50;
         private List<IBall> _balls = new();
@@ -36,7 +36,11 @@ namespace Logic
                 throw new ArgumentException("Coordinate out of board range.");
             }
 
-            IBall ball = IBall.CreateBall(x, y, _ballRadius, xSpeed, ySpeed);
+            IBallData ballData = _dataLayer.CreateBallData(x, y, _ballRadius, _ballRadius * 10, xSpeed, ySpeed);
+            IBall ball = IBall.CreateBall(ballData.XPosition, ballData.YPosition, ballData.Radius, ballData.Weight,
+                ballData.XSpeed, ballData.YSpeed);
+            ballData.PropertyChanged += ball.UpdateBall!;
+            ballData.PropertyChanged += CheckCollision!;
             _balls.Add(ball);
             return ball;
         }
@@ -60,21 +64,13 @@ namespace Logic
         public override void RemoveAllBalls()
         {
             _balls.Clear();
+            _dataLayer.RemoveAllBalls();
         }
 
-        public override void StartBalls()
+        public override void CheckCollision(Object s, PropertyChangedEventArgs e)
         {
-            _movementTimer = new Timer(MoveBallsAccordingToSpeed, null, 0, 8);
-        }
-
-        public override void StopBalls()
-        {
-            _movementTimer?.Dispose();
-        }
-
-        public override void MoveBallsAccordingToSpeed(Object? stateInfo)
-        {
-            foreach (IBall ball in _balls.ToArray())
+            IBallData ball = (IBallData) s;
+            if (e.PropertyName == "XPosition" || e.PropertyName == "YPosition")
             {
                 if (ball.XPosition + ball.XSpeed >= _boardWidth - _ballRadius ||
                     ball.XPosition + ball.XSpeed <= _ballRadius)
@@ -87,7 +83,6 @@ namespace Logic
                 {
                     ball.ChangeYSense();
                 }
-                ball.Move();
             }
         }
     }

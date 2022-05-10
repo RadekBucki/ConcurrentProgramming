@@ -33,11 +33,7 @@ namespace Presentation.Model
         public override int Radius
         {
             get => _radius;
-            set
-            {
-                _radius = value;
-                RaisePropertyChanged();
-            }
+            set => _radius = value;
         }
 
         public override event PropertyChangedEventHandler? PropertyChanged;

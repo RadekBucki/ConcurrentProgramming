@@ -1,19 +1,30 @@
-using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using Data;
 
-namespace Logic
+namespace Data
 {
-    internal class Ball : IBall, INotifyPropertyChanged
+    internal class BallData : IBallData, INotifyPropertyChanged
     {
         private int _xPosition;
         private int _yPosition;
-        private int _weight;
         private int _radius;
+        private int _weight;
         private int _xSpeed;
         private int _ySpeed;
         public override event PropertyChangedEventHandler? PropertyChanged;
+
+        public BallData(int xPosition, int yPosition, int radius, int weight, int xSpeed, int ySpeed)
+        {
+            XPosition = xPosition;
+            YPosition = yPosition;
+            XSpeed = xSpeed;
+            YSpeed = ySpeed;
+            Radius = radius;
+            Weight = weight;
+            Thread ballThread = new Thread(StartMovement);
+            ballThread.IsBackground = true;
+            ballThread.Start();
+        }
 
         public override int XPosition
         {
@@ -34,13 +45,13 @@ namespace Logic
                 RaisePropertyChanged();
             }
         }
-        
+
         public override int Weight
         {
             get => _weight;
             set => _weight = value;
         }
-        
+
         public override int Radius
         {
             get => _radius;
@@ -50,30 +61,46 @@ namespace Logic
         public override int XSpeed
         {
             get => _xSpeed;
-            set => _xSpeed = value;
+            set
+            {
+                _xSpeed = value;
+                RaisePropertyChanged();
+            }
         }
 
         public override int YSpeed
         {
             get => _ySpeed;
-            set => _ySpeed = value;
-        }
-        
-        public override void UpdateBall(Object s, PropertyChangedEventArgs e)
-        {
-            IBallData ball = (IBallData) s;
-            GetType().GetProperty(e.PropertyName!)!.SetValue(
-                this, ball.GetType().GetProperty(e.PropertyName!)!.GetValue(ball));
+            set
+            {
+                _ySpeed = value;
+                RaisePropertyChanged();
+            }
         }
 
-        public Ball(int xPosition, int yPosition, int radius, int weight, int xSpeed = 0, int ySpeed = 0)
+        public override void ChangeXSense()
         {
-            XPosition = xPosition;
-            YPosition = yPosition;
-            XSpeed = xSpeed;
-            YSpeed = ySpeed;
-            Radius = radius;
-            Weight = weight;
+            XSpeed *= -1;
+        }
+
+        public override void ChangeYSense()
+        {
+            YSpeed *= -1;
+        }
+
+        public override void StartMovement()
+        {
+            while (true)
+            {
+                Move();
+                Thread.Sleep(8);
+            }
+        }
+
+        public override void Move()
+        {
+            XPosition += XSpeed;
+            YPosition += YSpeed;
         }
 
         private void RaisePropertyChanged([CallerMemberName] string? propertyName = null)
