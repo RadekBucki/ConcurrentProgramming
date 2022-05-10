@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Data;
 
 namespace Logic
@@ -19,10 +20,6 @@ namespace Logic
 
         public abstract void RemoveAllBalls();
 
-        public abstract void StartBalls();
-
-        public abstract void StopBalls();
-
-        public abstract void MoveBallsAccordingToSpeed(Object? stateInfo);
+        public abstract void CheckCollision(Object s, PropertyChangedEventArgs e);
     }
 }

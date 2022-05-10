@@ -59,7 +59,6 @@ namespace Presentation.ViewModel
 
                 _modelLayer.CreateNBallsInRandomPlaces(ballsNum);
                 RaisePropertyChanged(nameof(Circles));
-                _modelLayer.StartBallsMovement();
                 DoChangeButtonEnabled();
             }
             catch (Exception)
@@ -73,7 +72,6 @@ namespace Presentation.ViewModel
         {
             _modelLayer.ClearCircles();
             RaisePropertyChanged(nameof(Circles));
-            _modelLayer.StopBallsMovement();
             DoChangeButtonEnabled();
         }
 

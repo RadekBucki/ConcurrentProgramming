@@ -8,9 +8,10 @@ namespace LogicTests
     {
         private List<IBallData> _ballsData = new();
 
-        public override IBallData CreateBallData(int radius, int weight, int xSpeed = 0, int ySpeed = 0)
+        public override IBallData CreateBallData(int xPosition, int yPosition, int radius, int weight, int xSpeed = 0,
+            int ySpeed = 0)
         {
-            IBallData ballData = IBallData.CreateBallData(radius, weight, xSpeed, ySpeed);
+            IBallData ballData = IBallData.CreateBallData(xPosition, yPosition, radius, weight, xSpeed, ySpeed);
             _ballsData.Add(ballData);
             return ballData;
         }

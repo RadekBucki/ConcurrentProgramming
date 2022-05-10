@@ -17,9 +17,5 @@ namespace Presentation.Model
         public abstract void CreateNBallsInRandomPlaces(int numOfBalls);
 
         public abstract void ClearCircles();
-
-        public abstract void StartBallsMovement();
-
-        public abstract void StopBallsMovement();
     }
 }

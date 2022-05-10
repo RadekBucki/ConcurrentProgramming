@@ -22,9 +22,7 @@ namespace Logic
         public abstract int XSpeed { get; set; }
 
         public abstract int YSpeed { get; set; }
-        
-        public abstract void Move();
-        
+
         public abstract void UpdateBall(Object s, PropertyChangedEventArgs e);
     }
 }

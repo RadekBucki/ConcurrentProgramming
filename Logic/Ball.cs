@@ -62,20 +62,8 @@ namespace Logic
         public override void UpdateBall(Object s, PropertyChangedEventArgs e)
         {
             IBallData ball = (IBallData) s;
-            if (e.PropertyName == "XSpeed")
-            {
-                XSpeed = ball.XSpeed;
-            }
-            else if (e.PropertyName == "YSpeed")
-            {
-                YSpeed = ball.YSpeed;
-            }
-        }
-
-        public override void Move()
-        {
-            XPosition += XSpeed;
-            YPosition += YSpeed;
+            GetType().GetProperty(e.PropertyName!)!.SetValue(
+                this, ball.GetType().GetProperty(e.PropertyName!)!.GetValue(ball));
         }
 
         public Ball(int xPosition, int yPosition, int radius, int weight, int xSpeed = 0, int ySpeed = 0)

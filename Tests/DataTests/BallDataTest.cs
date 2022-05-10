@@ -6,7 +6,7 @@ namespace DataTests
     [TestClass]
     public class BallDataTest
     {
-        private IBallData _ball = IBallData.CreateBallData(1, 2, 1, 10);
+        private IBallData _ball = IBallData.CreateBallData(10, 10, 1, 2, 1, 10);
 
         [TestMethod]
         public void CreateBallTest()

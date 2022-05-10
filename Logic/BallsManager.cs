@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading;
 using Data;
 
@@ -11,7 +12,6 @@ namespace Logic
         private readonly int _boardHeight;
         private readonly int _ballRadius;
         private DataAbstractApi _dataLayer;
-        private Timer? _movementTimer;
         private const int MaxBallSpeed = 5;
         private const int BoardToBallRatio = 50;
         private List<IBall> _balls = new();
@@ -35,9 +35,12 @@ namespace Logic
             {
                 throw new ArgumentException("Coordinate out of board range.");
             }
-            IBallData ballData = _dataLayer.CreateBallData(_ballRadius, _ballRadius * 10, xSpeed, ySpeed);
-            IBall ball = IBall.CreateBall(x, y, ballData.Radius, ballData.Weight, ballData.XSpeed, ballData.YSpeed);
+
+            IBallData ballData = _dataLayer.CreateBallData(x, y, _ballRadius, _ballRadius * 10, xSpeed, ySpeed);
+            IBall ball = IBall.CreateBall(ballData.XPosition, ballData.YPosition, ballData.Radius, ballData.Weight,
+                ballData.XSpeed, ballData.YSpeed);
             ballData.PropertyChanged += ball.UpdateBall!;
+            ballData.PropertyChanged += CheckCollision!;
             _balls.Add(ball);
             return ball;
         }
@@ -64,34 +67,22 @@ namespace Logic
             _dataLayer.RemoveAllBalls();
         }
 
-        public override void StartBalls()
+        public override void CheckCollision(Object s, PropertyChangedEventArgs e)
         {
-            _movementTimer = new Timer(MoveBallsAccordingToSpeed, null, 0, 8);
-        }
-
-        public override void StopBalls()
-        {
-            _movementTimer?.Dispose();
-        }
-
-        public override void MoveBallsAccordingToSpeed(Object? stateInfo)
-        {
-            IBall[] balls = _balls.ToArray();
-            IBallData[] dataBalls = _dataLayer.GetAllBalls().ToArray();
-            for (int i = 0; i < balls.Length; i++)
+            IBallData ball = (IBallData) s;
+            if (e.PropertyName == "XPosition" || e.PropertyName == "YPosition")
             {
-                if (balls[i].XPosition + balls[i].XSpeed >= _boardWidth - _ballRadius ||
-                    balls[i].XPosition + balls[i].XSpeed <= _ballRadius)
+                if (ball.XPosition + ball.XSpeed >= _boardWidth - _ballRadius ||
+                    ball.XPosition + ball.XSpeed <= _ballRadius)
                 {
-                    dataBalls[i].ChangeXSense();
+                    ball.ChangeXSense();
                 }
 
-                if (balls[i].YPosition + balls[i].YSpeed >= _boardHeight - _ballRadius ||
-                    balls[i].YPosition + balls[i].YSpeed <= _ballRadius)
+                if (ball.YPosition + ball.YSpeed >= _boardHeight - _ballRadius ||
+                    ball.YPosition + ball.YSpeed <= _ballRadius)
                 {
-                    dataBalls[i].ChangeYSense();
+                    ball.ChangeYSense();
                 }
-                balls[i].Move();
             }
         }
     }

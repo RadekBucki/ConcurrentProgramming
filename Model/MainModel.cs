@@ -43,15 +43,5 @@ namespace Presentation.Model
         {
             _logicLayer.RemoveAllBalls();
         }
-
-        public override void StartBallsMovement()
-        {
-            _logicLayer.StartBalls();
-        }
-
-        public override void StopBallsMovement()
-        {
-            _logicLayer.StopBalls();
-        }
     }
 }

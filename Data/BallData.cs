@@ -1,68 +1,111 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace Data;
-
-public class BallData : IBallData, INotifyPropertyChanged
+namespace Data
 {
-    private int _radius;
-    private int _weight;
-    private int _xSpeed;
-    private int _ySpeed;
-    public override event PropertyChangedEventHandler? PropertyChanged;
-
-    public BallData(int radius, int weight, int xSpeed, int ySpeed)
+    internal class BallData : IBallData, INotifyPropertyChanged
     {
-        XSpeed = xSpeed;
-        YSpeed = ySpeed;
-        Radius = radius;
-        Weight = weight;
-    }
+        private int _xPosition;
+        private int _yPosition;
+        private int _radius;
+        private int _weight;
+        private int _xSpeed;
+        private int _ySpeed;
+        public override event PropertyChangedEventHandler? PropertyChanged;
 
-    public override int Weight
-    {
-        get => _weight;
-        set => _weight = value;
-    }
-
-    public override int Radius
-    {
-        get => _radius;
-        set => _radius = value;
-    }
-
-    public override int XSpeed
-    {
-        get => _xSpeed;
-        set
+        public BallData(int xPosition, int yPosition, int radius, int weight, int xSpeed, int ySpeed)
         {
-            _xSpeed = value; 
-            RaisePropertyChanged();
+            XPosition = xPosition;
+            YPosition = yPosition;
+            XSpeed = xSpeed;
+            YSpeed = ySpeed;
+            Radius = radius;
+            Weight = weight;
+            Thread ballThread = new Thread(StartMovement);
+            ballThread.IsBackground = true;
+            ballThread.Start();
         }
-    }
 
-    public override int YSpeed
-    {
-        get => _ySpeed;
-        set
+        public override int XPosition
         {
-            _ySpeed = value;
-            RaisePropertyChanged();
+            get => _xPosition;
+            set
+            {
+                _xPosition = value;
+                RaisePropertyChanged();
+            }
         }
-    }
 
-    public override void ChangeXSense()
-    {
-        XSpeed *= -1;
-    }
+        public override int YPosition
+        {
+            get => _yPosition;
+            set
+            {
+                _yPosition = value;
+                RaisePropertyChanged();
+            }
+        }
 
-    public override void ChangeYSense()
-    {
-        YSpeed *= -1;
-    }
-    
-    private void RaisePropertyChanged([CallerMemberName] string? propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        public override int Weight
+        {
+            get => _weight;
+            set => _weight = value;
+        }
+
+        public override int Radius
+        {
+            get => _radius;
+            set => _radius = value;
+        }
+
+        public override int XSpeed
+        {
+            get => _xSpeed;
+            set
+            {
+                _xSpeed = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public override int YSpeed
+        {
+            get => _ySpeed;
+            set
+            {
+                _ySpeed = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public override void ChangeXSense()
+        {
+            XSpeed *= -1;
+        }
+
+        public override void ChangeYSense()
+        {
+            YSpeed *= -1;
+        }
+
+        public override void StartMovement()
+        {
+            while (true)
+            {
+                Move();
+                Thread.Sleep(8);
+            }
+        }
+
+        public override void Move()
+        {
+            XPosition += XSpeed;
+            YPosition += YSpeed;
+        }
+
+        private void RaisePropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }
