@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Threading;
+using System.ComponentModel;
 using Logic;
 
 namespace ModelTests
@@ -10,7 +10,6 @@ namespace ModelTests
         private readonly int _boardWidth;
         private readonly int _boardHeight;
         private readonly int _ballRadius;
-        private Timer? _movementTimer;
         private const int MaxBallSpeed = 5;
         private const int BoardToBallRatio = 50;
         private const int BallWeight= 100;
@@ -60,33 +59,9 @@ namespace ModelTests
             _balls.Clear();
         }
 
-        public override void StartBalls()
+        public override void CheckCollision(Object s, PropertyChangedEventArgs e)
         {
-            _movementTimer = new Timer(MoveBallsAccordingToSpeed, null, 0, 8);
-        }
-
-        public override void StopBalls()
-        {
-            _movementTimer?.Dispose();
-        }
-
-        public override void MoveBallsAccordingToSpeed(Object? stateInfo)
-        {
-            foreach (IBall ball in _balls.ToArray())
-            {
-                if (ball.XPosition + ball.XSpeed >= _boardWidth - _ballRadius ||
-                    ball.XPosition + ball.XSpeed <= _ballRadius)
-                {
-                    ball.ChangeXSense();
-                }
-
-                if (ball.YPosition + ball.YSpeed >= _boardHeight - _ballRadius ||
-                    ball.YPosition + ball.YSpeed <= _ballRadius)
-                {
-                    ball.ChangeYSense();
-                }
-                ball.Move();
-            }
+            throw new NotImplementedException();
         }
     }
 }

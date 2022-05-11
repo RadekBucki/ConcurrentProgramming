@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ComponentModel;
 using System.Threading;
 using Data;
 
@@ -12,11 +13,11 @@ namespace Logic
         private readonly int _boardHeight;
         private readonly int _ballRadius;
         private DataAbstractApi _dataLayer;
-        private Timer? _movementTimer;
         private const int MaxBallSpeed = 5;
         private const int BoardToBallRatio = 50;
         private const int BallWeight = 100;
         private List<IBall> _balls = new();
+        private List<IBallData> _ballsInCollision = new();
 
         public BallsManager(int boardWidth, int boardHeight, DataAbstractApi dataLayer)
         {
@@ -45,10 +46,13 @@ namespace Logic
                 throw new ArgumentException("Another ball is already here");
             }
 
-
-            IBall newBall = IBall.CreateBall(x, y, _ballRadius, BallWeight, xSpeed, ySpeed);
-            _balls.Add(newBall);
-            return newBall;
+            IBallData ballData = _dataLayer.CreateBallData(x, y, _ballRadius, BallWeight, xSpeed, ySpeed);
+            IBall ball = IBall.CreateBall(ballData.XPosition, ballData.YPosition, ballData.Radius, ballData.Weight,
+                ballData.XSpeed, ballData.YSpeed);
+            ballData.PropertyChanged += ball.UpdateBall!;
+            ballData.PropertyChanged += CheckCollision!;
+            _balls.Add(ball);
+            return ball;
         }
 
         public override IBall CreateBallInRandomPlace()
@@ -61,7 +65,7 @@ namespace Logic
                 try
                 {
                     return CreateBall(
-                        r.Next(_ballRadius, _boardWidth - _ballRadius), 
+                        r.Next(_ballRadius, _boardWidth - _ballRadius),
                         r.Next(_ballRadius, _boardHeight - _ballRadius),
                         r.Next(-MaxBallSpeed, MaxBallSpeed),
                         r.Next(-MaxBallSpeed, MaxBallSpeed)
@@ -87,29 +91,26 @@ namespace Logic
         public override void RemoveAllBalls()
         {
             _balls.Clear();
+            _dataLayer.RemoveAllBalls();
         }
 
-        public override void StartBalls()
+        public override void CheckCollision(Object s, PropertyChangedEventArgs e)
         {
-            _movementTimer = new Timer(MoveBallsAccordingToSpeed, null, 0, 8);
-        }
-
-        public override void StopBalls()
-        {
-            _movementTimer?.Dispose();
-        }
-
-        public override void MoveBallsAccordingToSpeed(Object? stateInfo)
-        {
-            foreach (IBall ball in _balls.ToArray())
+            IBallData ball = (IBallData) s;
+            if (e.PropertyName is not ("XPosition" or "YPosition")) return;
+            WallReflection(ball);
+            BallReflection(ball);
+            try
             {
-                WallReflection(ball);
-                BallReflection(ball);
-                ball.Move();
+                _ballsInCollision.Remove(ball);
+            }
+            catch (Exception)
+            {
+                // ignored
             }
         }
 
-        private void WallReflection(IBall ball)
+        private void WallReflection(IBallData ball)
         {
             if (ball.XPosition + ball.XSpeed >= _boardWidth - _ballRadius ||
                 ball.XPosition + ball.XSpeed <= _ballRadius)
@@ -124,9 +125,9 @@ namespace Logic
             }
         }
 
-        private void BallReflection(IBall ball1)
+        private void BallReflection(IBallData ball1)
         {
-            foreach (IBall ball2 in _balls.ToArray())
+            foreach (IBallData ball2 in _dataLayer.GetAllBalls().ToArray())
             {
                 if (ball1.Equals(ball2))
                 {
@@ -137,30 +138,29 @@ namespace Logic
                     (Math.Abs(Math.Sqrt(
                          (ball1.XPosition - ball2.XPosition) * (ball1.XPosition - ball2.XPosition) +
                          (ball1.YPosition - ball2.YPosition) * (ball1.YPosition - ball2.YPosition)
-                     ) - _ballRadius * 2.0) < 0.1 ||
+                     )) <= _ballRadius * 2.0 ||
                      Math.Sqrt(
                          (ball1.XPosition + ball1.XSpeed - ball2.XPosition + ball2.XSpeed) *
                          (ball1.XPosition + ball1.XSpeed - ball2.XPosition + ball2.XSpeed) +
                          (ball1.YPosition + ball1.YSpeed - ball2.YPosition + ball2.YSpeed) *
                          (ball1.YPosition + ball1.YSpeed - ball2.YPosition + ball2.YSpeed)
                      ) <= _ballRadius * 2.0) &&
-                    !ball1.InCollisionWithBall.Contains(ball2) &&
-                    !ball2.InCollisionWithBall.Contains(ball1)
+                    !_ballsInCollision.Contains(ball2) &&
+                    !_ballsInCollision.Contains(ball1) &&
+                    Monitor.TryEnter(ball1, new TimeSpan(0, 0, 0, 0, 10))
                    )
                 {
-                    ball1.InCollisionWithBall.Add(ball2);
-                    ball2.InCollisionWithBall.Add(ball1);
+                    _ballsInCollision.Add(ball1);
+                    _ballsInCollision.Add(ball2);
 
                     int ball1StartXSpeed = ball1.XSpeed;
                     int ball1StartYSpeed = ball1.YSpeed;
                     int ball2StartXSpeed = ball2.XSpeed;
                     int ball2StartYSpeed = ball2.YSpeed;
-
                     ball1.YSpeed = ball2StartYSpeed;
                     ball2.YSpeed = ball1StartYSpeed;
                     ball1.XSpeed = ball2StartXSpeed;
                     ball2.XSpeed = ball1StartXSpeed;
-
                     if (ball1StartXSpeed * ball2StartXSpeed > 0)
                     {
                         ChangeXSenseToOpposite(ball1StartXSpeed, ball1, ball2);
@@ -171,15 +171,15 @@ namespace Logic
                         ChangeYSenseToOpposite(ball1StartYSpeed, ball1, ball2);
                     }
 
+                    ball1.Move();
                     ball2.Move();
 
-                    ball1.InCollisionWithBall.Remove(ball2);
-                    ball2.InCollisionWithBall.Remove(ball1);
+                    Monitor.Exit(ball1);
                 }
             }
         }
 
-        private static void ChangeYSenseToOpposite(int ball1StartYSpeed, IBall ball1, IBall ball2)
+        private static void ChangeYSenseToOpposite(int ball1StartYSpeed, IBallData ball1, IBallData ball2)
         {
             switch (ball1StartYSpeed)
             {
@@ -194,7 +194,7 @@ namespace Logic
             }
         }
 
-        private static void ChangeXSenseToOpposite(int ball1StartXSpeed, IBall ball1, IBall ball2)
+        private static void ChangeXSenseToOpposite(int ball1StartXSpeed, IBallData ball1, IBallData ball2)
         {
             switch (ball1StartXSpeed)
             {

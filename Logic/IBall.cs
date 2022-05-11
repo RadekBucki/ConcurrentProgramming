@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System;
 using System.ComponentModel;
 
 namespace Logic
@@ -13,19 +13,19 @@ namespace Logic
         }
 
         public abstract event PropertyChangedEventHandler? PropertyChanged;
+        
         public abstract int XPosition { get; set; }
 
         public abstract int YPosition { get; set; }
 
+        public abstract int Weight { get; set; }
+        
         public abstract int Radius { get; set; }
 
         public abstract int XSpeed { get; set; }
 
         public abstract int YSpeed { get; set; }
-        public abstract int Weight { get; set; }
-        public abstract List<IBall> InCollisionWithBall { get; set; }
-        public abstract void ChangeXSense();
-        public abstract void ChangeYSense();
-        public abstract void Move();
+
+        public abstract void UpdateBall(Object s, PropertyChangedEventArgs e);
     }
 }

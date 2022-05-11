@@ -19,7 +19,7 @@ namespace ModelTests
 
         [TestMethod]
         public void CreateCircleTest()
-        {            
+        {
             Assert.IsNotNull(_model);
             _model.CreateBallInRandomPlace();
             Assert.AreEqual(1, _model.GetCircles().Count);

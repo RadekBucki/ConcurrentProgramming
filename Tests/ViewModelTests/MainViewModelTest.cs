@@ -8,7 +8,7 @@ namespace ViewModelTests
     {
         private TestModel _testModel = new(10, 10);
         private MainViewModel? _mainViewModel;
-
+        
         [TestInitialize]
         public void TestInitialize()
         {
@@ -30,7 +30,7 @@ namespace ViewModelTests
             Assert.AreEqual(true, _mainViewModel.ButtonEnabled);
             Assert.AreEqual(0, _mainViewModel.Circles.Count);
         }
-
+        
         [TestMethod]
         [DataRow("-5")]
         [DataRow("abc")]
