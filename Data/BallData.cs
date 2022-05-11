@@ -92,6 +92,10 @@ namespace Data
         {
             while (true)
             {
+                if (!Monitor.TryEnter(this, new TimeSpan(0, 0, 0, 0, 10)))
+                {
+                    Monitor.Wait(this);
+                }
                 Move();
                 Thread.Sleep(8);
             }

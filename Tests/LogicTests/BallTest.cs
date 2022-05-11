@@ -6,17 +6,28 @@ namespace LogicTests
     [TestClass]
     public class BallTest
     {
-        private IBall _ball = IBall.CreateBall(1, 2, 1, 10);
-        
+        private IBall _ball = IBall.CreateBall(1, 2, 1, 1);
+
         [TestMethod]
         public void CreateBallTest()
         {
+            Assert.AreEqual(1, _ball.XPosition);
+            Assert.AreEqual(2, _ball.YPosition);
             Assert.AreEqual(0, _ball.XSpeed);
             Assert.AreEqual(0, _ball.YSpeed);
             Assert.AreEqual(1, _ball.Radius);
-            Assert.AreEqual(10, _ball.Weight);
+            Assert.AreEqual(1, _ball.Weight);
         }
-        
+
+        [TestMethod]
+        public void SetBallCoordinatesTest()
+        {
+            _ball.XPosition = 2;
+            _ball.YPosition = 3;
+            Assert.AreEqual(2, _ball.XPosition);
+            Assert.AreEqual(3, _ball.YPosition);
+        }
+
         [TestMethod]
         public void SetBallSpeedTest()
         {
@@ -25,20 +36,19 @@ namespace LogicTests
             Assert.AreEqual(2, _ball.XSpeed);
             Assert.AreEqual(3, _ball.YSpeed);
         }
-        
+
         [TestMethod]
         public void SetRadiusTest()
         {
             _ball.Radius = 2;
             Assert.AreEqual(2, _ball.Radius);
         }
-        
-        
+
         [TestMethod]
         public void SetWeightTest()
         {
-            _ball.Weight = 20;
-            Assert.AreEqual(20, _ball.Weight);
+            _ball.Weight = 2;
+            Assert.AreEqual(2, _ball.Weight);
         }
     }
 }
