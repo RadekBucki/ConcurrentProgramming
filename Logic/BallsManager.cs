@@ -92,6 +92,7 @@ namespace Logic
         {
             _balls.Clear();
             _dataLayer.RemoveAllBalls();
+            _ballsInCollision.Clear();
         }
 
         public override void CheckCollision(Object s, PropertyChangedEventArgs e)
@@ -173,6 +174,22 @@ namespace Logic
 
                     ball1.Move();
                     ball2.Move();
+                    
+                    if (Math.Abs(Math.Sqrt(
+                            (ball1.XPosition - ball2.XPosition) * (ball1.XPosition - ball2.XPosition) +
+                            (ball1.YPosition - ball2.YPosition) * (ball1.YPosition - ball2.YPosition)
+                        )) <= _ballRadius * 2.0 ||
+                        Math.Sqrt(
+                            (ball1.XPosition + ball1.XSpeed - ball2.XPosition + ball2.XSpeed) *
+                            (ball1.XPosition + ball1.XSpeed - ball2.XPosition + ball2.XSpeed) +
+                            (ball1.YPosition + ball1.YSpeed - ball2.YPosition + ball2.YSpeed) *
+                            (ball1.YPosition + ball1.YSpeed - ball2.YPosition + ball2.YSpeed)
+                        ) <= _ballRadius * 2.0)
+                    {
+                        Thread.Sleep(8);
+                        ball2.Move();
+                    }
+
 
                     Monitor.Exit(ball1);
                 }
