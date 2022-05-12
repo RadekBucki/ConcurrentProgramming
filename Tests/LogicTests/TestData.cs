@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Data;
 
@@ -7,6 +6,12 @@ namespace LogicTests
     internal class TestData : DataAbstractApi
     {
         private List<IBallData> _ballsData = new();
+
+        public TestData(int boardWidth, int boardHeight)
+        {
+            BoardWidth = boardWidth;
+            BoardHeight = boardHeight;
+        }
 
         public override IBallData CreateBallData(int xPosition, int yPosition, int radius, int weight, int xSpeed = 0,
             int ySpeed = 0)
@@ -25,5 +30,8 @@ namespace LogicTests
         {
             _ballsData.Clear();
         }
+
+        public override int BoardWidth { get; }
+        public override int BoardHeight { get; }
     }
 }

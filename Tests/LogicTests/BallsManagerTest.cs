@@ -8,22 +8,22 @@ namespace LogicTests
     public class BallsManagerTest
     {
         private readonly LogicAbstractApi _ballsManager = LogicAbstractApi.CreateApi(
-            100, 100, new TestData()
+            100, 100, new TestData(100, 100)
         );
-        
+
         [TestInitialize]
         public void Init()
         {
             Assert.AreEqual(0, _ballsManager.GetAllBalls().Count);
         }
-        
+
         [TestMethod]
         public void CreateBallTest()
         {
             _ballsManager.CreateBall(10, 20, 1, 2);
             Assert.AreEqual(1, _ballsManager.GetAllBalls().Count);
         }
-        
+
         [DataTestMethod]
         [DataRow(-1, 1, 1, 1)]
         [DataRow(1, -1, 1, 1)]
@@ -38,14 +38,14 @@ namespace LogicTests
             Assert.ThrowsException<ArgumentException>(() => _ballsManager.CreateBall(x, y, xSpeed, ySpeed));
             Assert.AreEqual(0, _ballsManager.GetAllBalls().Count);
         }
-        
+
         [TestMethod]
         public void CreateBallInRandomPlaceTest()
         {
             _ballsManager.CreateBallInRandomPlace();
             Assert.AreEqual(1, _ballsManager.GetAllBalls().Count);
         }
-        
+
         [TestMethod]
         public void RemoveAllBallsTest()
         {

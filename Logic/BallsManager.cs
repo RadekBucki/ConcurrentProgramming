@@ -19,12 +19,12 @@ namespace Logic
         private List<IBall> _balls = new();
         private List<IBallData> _ballsInCollision = new();
 
-        public BallsManager(int boardWidth, int boardHeight, DataAbstractApi dataLayer)
+        public BallsManager(DataAbstractApi dataLayer)
         {
-            _boardWidth = boardWidth;
-            _boardHeight = boardHeight;
-            _ballRadius = Math.Min(boardHeight, boardWidth) / BoardToBallRatio;
             _dataLayer = dataLayer;
+            _boardWidth = _dataLayer.BoardWidth;
+            _boardHeight = _dataLayer.BoardHeight;
+            _ballRadius = Math.Min(_boardHeight, _boardWidth) / BoardToBallRatio;
         }
 
         public override IBall CreateBall(int x, int y, int xSpeed, int ySpeed)
