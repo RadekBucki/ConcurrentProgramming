@@ -2,9 +2,9 @@ namespace Data
 {
     public abstract class DataAbstractApi
     {
-        public static DataAbstractApi CreateApi()
+        public static DataAbstractApi CreateApi(int boardWidth, int boardHeight)
         {
-            return new BallsRepository();
+            return new Board(boardWidth, boardHeight);
         }
 
         public abstract IBallData CreateBallData(int xPosition, int yPosition, int radius, int weight, int xSpeed = 0,
@@ -13,5 +13,7 @@ namespace Data
         public abstract List<IBallData> GetAllBalls();
 
         public abstract void RemoveAllBalls();
+        public abstract int BoardWidth { get; }
+        public abstract int BoardHeight { get; }
     }
 }

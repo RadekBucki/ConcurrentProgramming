@@ -9,7 +9,7 @@ namespace Logic
     {
         public static LogicAbstractApi CreateApi(int boardWidth, int boardHeight, DataAbstractApi? dataAbstractApi = null)
         {
-            return new BallsManager(boardWidth, boardHeight, dataAbstractApi ?? DataAbstractApi.CreateApi());
+            return new BallsManager(dataAbstractApi ?? DataAbstractApi.CreateApi(boardWidth, boardHeight));
         }
 
         public abstract IBall CreateBall(int x, int y, int xSpeed, int ySpeed);
