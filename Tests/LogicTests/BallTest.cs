@@ -1,12 +1,12 @@
 using Logic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Tests.DataTests
+namespace LogicTests
 {
     [TestClass]
     public class BallTest
     {
-        private IBall _ball = IBall.CreateBall(1, 2, 1);
+        private IBall _ball = IBall.CreateBall(1, 2, 1, 1);
 
         [TestMethod]
         public void CreateBallTest()
@@ -16,6 +16,7 @@ namespace Tests.DataTests
             Assert.AreEqual(0, _ball.XSpeed);
             Assert.AreEqual(0, _ball.YSpeed);
             Assert.AreEqual(1, _ball.Radius);
+            Assert.AreEqual(1, _ball.Weight);
         }
 
         [TestMethod]
@@ -41,6 +42,13 @@ namespace Tests.DataTests
         {
             _ball.Radius = 2;
             Assert.AreEqual(2, _ball.Radius);
+        }
+
+        [TestMethod]
+        public void SetWeightTest()
+        {
+            _ball.Weight = 2;
+            Assert.AreEqual(2, _ball.Weight);
         }
     }
 }

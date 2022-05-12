@@ -6,15 +6,15 @@ namespace Presentation.ViewModel
 {
     public class MainViewModel : BaseViewModel
     {
-        private readonly ModelAbstractAPI _modelLayer;
+        private readonly ModelAbstractApi _modelLayer;
         private bool _buttonEnabled = true;
         private string _numOfBalls = "";
 
-        public MainViewModel() : this(ModelAbstractAPI.CreateApi())
+        public MainViewModel() : this(ModelAbstractApi.CreateApi())
         {
         }
 
-        public MainViewModel(ModelAbstractAPI modelLayer)
+        public MainViewModel(ModelAbstractApi modelLayer)
         {
             StartCommand = new RelayCommand(StartBalls, CanDoDisableButton);
             StopCommand = new RelayCommand(StopBalls, CanDoEnableButton);
@@ -45,24 +45,20 @@ namespace Presentation.ViewModel
             }
         }
 
-        public ObservableCollection<ICircle> Circles
-        {
-            get => _modelLayer.GetCircles();
-        }
+        public ObservableCollection<ICircle> Circles => _modelLayer.GetCircles();
 
         private void StartBalls()
         {
             try
             {
                 int ballsNum = int.Parse(NumOfBalls);
-                if (ballsNum < 0)
+                if (ballsNum <= 0)
                 {
                     throw new ArgumentException("Not an positive integer");
                 }
 
                 _modelLayer.CreateNBallsInRandomPlaces(ballsNum);
-                RaisePropertyChanged("Circles");
-                _modelLayer.StartBallsMovement();
+                RaisePropertyChanged(nameof(Circles));
                 DoChangeButtonEnabled();
             }
             catch (Exception)
@@ -74,10 +70,10 @@ namespace Presentation.ViewModel
 
         private void StopBalls()
         {
-            _modelLayer.ClearBalls();
-            RaisePropertyChanged("Circles");
-            _modelLayer.StopBallsMovement();
+            _modelLayer.ClearCircles();
+            RaisePropertyChanged(nameof(Circles));
             DoChangeButtonEnabled();
+            Environment.Exit(0);
         }
 
         private void DoChangeButtonEnabled()

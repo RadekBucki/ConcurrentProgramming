@@ -1,10 +1,12 @@
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Logic;
+using Presentation.Model;
 
-namespace Presentation.Model
+namespace ViewModelTests
 {
-    internal class Circle : ICircle, INotifyPropertyChanged
+    internal class TestCircle : ICircle, INotifyPropertyChanged
     {
         private int _x;
         private int _y;
@@ -33,12 +35,16 @@ namespace Presentation.Model
         public override int Radius
         {
             get => _radius;
-            set => _radius = value;
+            set
+            {
+                _radius = value;
+                RaisePropertyChanged();
+            }
         }
 
         public override event PropertyChangedEventHandler? PropertyChanged;
 
-        public Circle(int x, int y, int radius)
+        public TestCircle(int x, int y, int radius)
         {
             X = x;
             Y = y;

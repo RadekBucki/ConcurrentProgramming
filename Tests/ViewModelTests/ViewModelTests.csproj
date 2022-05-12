@@ -5,10 +5,6 @@
         <Nullable>enable</Nullable>
 
         <IsPackable>false</IsPackable>
-
-        <AssemblyName>Temp</AssemblyName>
-
-        <RootNamespace>Temp</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -19,8 +15,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\DataTests\DataTests.csproj" />
-      <ProjectReference Include="..\LogicTests\LogicTests.csproj" />
+      <ProjectReference Include="..\..\Logic\Logic.csproj" />
+      <ProjectReference Include="..\..\Model\Model.csproj" />
+      <ProjectReference Include="..\..\ViewModel\ViewModel.csproj" />
     </ItemGroup>
 
 </Project>
