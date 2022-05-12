@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ComponentModel;
-using System.Threading;
 using Data;
 
 namespace Logic
@@ -17,7 +16,8 @@ namespace Logic
         private const int BoardToBallRatio = 50;
         private const int BallWeight = 100;
         private List<IBall> _balls = new();
-        private List<IBallData> _ballsInCollision = new();
+        private Dictionary <IBallData, IBallData> _ballsLastCollision = new();
+        private readonly object _syncObject = new();
 
         public BallsManager(DataAbstractApi dataLayer)
         {
@@ -97,17 +97,11 @@ namespace Logic
         public override void CheckCollision(Object s, PropertyChangedEventArgs e)
         {
             IBallData ball = (IBallData) s;
+
             if (e.PropertyName is not ("XPosition" or "YPosition")) return;
-            WallReflection(ball);
+            
             BallReflection(ball);
-            try
-            {
-                _ballsInCollision.Remove(ball);
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
+            WallReflection(ball);
         }
 
         private void WallReflection(IBallData ball)
@@ -115,66 +109,67 @@ namespace Logic
             if (ball.XPosition + ball.XSpeed >= _boardWidth - _ballRadius ||
                 ball.XPosition + ball.XSpeed <= _ballRadius)
             {
+                _ballsLastCollision.Remove(ball);
                 ball.ChangeXSense();
             }
 
             if (ball.YPosition + ball.YSpeed >= _boardHeight - _ballRadius ||
                 ball.YPosition + ball.YSpeed <= _ballRadius)
             {
+                _ballsLastCollision.Remove(ball);
                 ball.ChangeYSense();
             }
         }
 
         private void BallReflection(IBallData ball1)
         {
-            foreach (IBallData ball2 in _dataLayer.GetAllBalls().ToArray())
+            lock (_syncObject)
             {
-                if (ball1.Equals(ball2))
+                foreach (IBallData ball2 in _dataLayer.GetAllBalls().ToArray())
                 {
-                    continue;
-                }
-
-                if ( //condition of circles external contact: (r_1 + r_2) <= |AB|
-                    (Math.Abs(Math.Sqrt(
-                         (ball1.XPosition - ball2.XPosition) * (ball1.XPosition - ball2.XPosition) +
-                         (ball1.YPosition - ball2.YPosition) * (ball1.YPosition - ball2.YPosition)
-                     )) <= _ballRadius * 2.0 ||
-                     Math.Sqrt(
-                         (ball1.XPosition + ball1.XSpeed - ball2.XPosition + ball2.XSpeed) *
-                         (ball1.XPosition + ball1.XSpeed - ball2.XPosition + ball2.XSpeed) +
-                         (ball1.YPosition + ball1.YSpeed - ball2.YPosition + ball2.YSpeed) *
-                         (ball1.YPosition + ball1.YSpeed - ball2.YPosition + ball2.YSpeed)
-                     ) <= _ballRadius * 2.0) &&
-                    !_ballsInCollision.Contains(ball2) &&
-                    !_ballsInCollision.Contains(ball1) &&
-                    Monitor.TryEnter(ball1, new TimeSpan(0, 0, 0, 0, 10))
-                   )
-                {
-                    _ballsInCollision.Add(ball1);
-                    _ballsInCollision.Add(ball2);
-
-                    int ball1StartXSpeed = ball1.XSpeed;
-                    int ball1StartYSpeed = ball1.YSpeed;
-                    int ball2StartXSpeed = ball2.XSpeed;
-                    int ball2StartYSpeed = ball2.YSpeed;
-                    ball1.YSpeed = ball2StartYSpeed;
-                    ball2.YSpeed = ball1StartYSpeed;
-                    ball1.XSpeed = ball2StartXSpeed;
-                    ball2.XSpeed = ball1StartXSpeed;
-                    if (ball1StartXSpeed * ball2StartXSpeed > 0)
+                    IBallData lastBall1, lastBall2;
+                    if ((_ballsLastCollision.TryGetValue(ball1, out lastBall1!) && 
+                        _ballsLastCollision.TryGetValue(ball2, out lastBall2!) &&
+                        lastBall1 == ball2 && lastBall2 == ball1) || ball1.Equals(ball2))
                     {
-                        ChangeXSenseToOpposite(ball1StartXSpeed, ball1, ball2);
+                        continue;
                     }
-
-                    if (ball1StartYSpeed * ball2StartYSpeed > 0)
+                    
+                    if ( //condition of circles external contact: (r_1 + r_2) <= |AB|
+                        (Math.Abs(Math.Sqrt(
+                             (ball1.XPosition - ball2.XPosition) * (ball1.XPosition - ball2.XPosition) +
+                             (ball1.YPosition - ball2.YPosition) * (ball1.YPosition - ball2.YPosition)
+                         )) <= _ballRadius * 2.0 ||
+                         Math.Sqrt(
+                             (ball1.XPosition + ball1.XSpeed - ball2.XPosition + ball2.XSpeed) *
+                             (ball1.XPosition + ball1.XSpeed - ball2.XPosition + ball2.XSpeed) +
+                             (ball1.YPosition + ball1.YSpeed - ball2.YPosition + ball2.YSpeed) *
+                             (ball1.YPosition + ball1.YSpeed - ball2.YPosition + ball2.YSpeed)
+                         ) <= _ballRadius * 2.0)
+                       )
                     {
-                        ChangeYSenseToOpposite(ball1StartYSpeed, ball1, ball2);
+                        int ball1StartXSpeed = ball1.XSpeed;
+                        int ball1StartYSpeed = ball1.YSpeed;
+                        int ball2StartXSpeed = ball2.XSpeed;
+                        int ball2StartYSpeed = ball2.YSpeed;
+                        ball1.YSpeed = ball2StartYSpeed;
+                        ball2.YSpeed = ball1StartYSpeed;
+                        ball1.XSpeed = ball2StartXSpeed;
+                        ball2.XSpeed = ball1StartXSpeed;
+                        if (ball1StartXSpeed * ball2StartXSpeed > 0)
+                        {
+                            ChangeXSenseToOpposite(ball1StartXSpeed, ball1, ball2);
+                        }
+
+                        if (ball1StartYSpeed * ball2StartYSpeed > 0)
+                        {
+                            ChangeYSenseToOpposite(ball1StartYSpeed, ball1, ball2);
+                        }
+                        _ballsLastCollision.Remove(ball1);
+                        _ballsLastCollision.Remove(ball2);
+                        _ballsLastCollision.Add(ball1, ball2);
+                        _ballsLastCollision.Add(ball2, ball1);
                     }
-
-                    ball1.Move();
-                    ball2.Move();
-
-                    Monitor.Exit(ball1);
                 }
             }
         }

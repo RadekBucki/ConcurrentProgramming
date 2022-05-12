@@ -26,9 +26,6 @@ namespace ViewModelTests
             _mainViewModel.StartCommand.Execute(null);
             Assert.AreEqual(false, _mainViewModel.ButtonEnabled);
             Assert.AreEqual(5, _mainViewModel.Circles.Count);
-            _mainViewModel.StopCommand.Execute(null);
-            Assert.AreEqual(true, _mainViewModel.ButtonEnabled);
-            Assert.AreEqual(0, _mainViewModel.Circles.Count);
         }
         
         [TestMethod]
