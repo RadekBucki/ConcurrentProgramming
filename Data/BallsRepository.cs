@@ -20,7 +20,6 @@
         public override void RemoveAllBalls()
         {
             _ballsData.Clear();
-            Environment.Exit(0);
         }
     }
 }
