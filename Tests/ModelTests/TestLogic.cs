@@ -59,7 +59,7 @@ namespace ModelTests
             _balls.Clear();
         }
 
-        public override void CheckCollision(Object s, PropertyChangedEventArgs e)
+        private void CheckCollision(object s, PropertyChangedEventArgs e)
         {
             throw new NotImplementedException();
         }

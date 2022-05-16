@@ -19,7 +19,5 @@ namespace Logic
         public abstract List<IBall> GetAllBalls();
 
         public abstract void RemoveAllBalls();
-
-        public abstract void CheckCollision(Object s, PropertyChangedEventArgs e);
     }
 }

@@ -24,5 +24,12 @@ namespace DataTests
             _dataLayer.RemoveAllBalls();
             Assert.AreEqual(0, _dataLayer.GetAllBalls().Count);
         }
+
+        [TestMethod]
+        public void GetBoardDimensionsTest()
+        {
+            Assert.AreEqual(100, _dataLayer.BoardHeight);    
+            Assert.AreEqual(100, _dataLayer.BoardWidth);    
+        }
     }
 }
