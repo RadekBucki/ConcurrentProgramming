@@ -29,7 +29,7 @@ internal class Logger
                                             "\t\t}},";
 
     private readonly string _fileName;
-    private bool _fileLock;
+    private object _fileLock = new();
 
     public Logger()
     {
@@ -45,7 +45,6 @@ internal class Logger
     
     public void EndLogging()
     {
-        _fileLock = true;
         Write(EndPart);
     }
     
@@ -79,12 +78,10 @@ internal class Logger
     [SuppressMessage("ReSharper", "EmptyEmbeddedStatement")]
     private void Log(string text)
     {
-        while (_fileLock);
-        _fileLock = true;
-
-        Write(text);
-
-        _fileLock = false;
+        lock (_fileLock)
+        {
+            Write(text);
+        }
     }
 
     private void Write(string text)
