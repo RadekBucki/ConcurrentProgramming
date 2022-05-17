@@ -40,6 +40,16 @@ namespace LogicTests
         }
 
         [TestMethod]
+        public void CreateBallInTheSamePlaceTest()
+        {
+            Assert.AreEqual(0, _ballsManager.GetAllBalls().Count);
+            _ballsManager.CreateBall(5, 5, 1, 1);
+            Assert.AreEqual(1, _ballsManager.GetAllBalls().Count);
+            Assert.ThrowsException<ArgumentException>(() => _ballsManager.CreateBall(5, 5, 2, 2));
+            Assert.AreEqual(1, _ballsManager.GetAllBalls().Count);
+        }
+
+        [TestMethod]
         public void CreateBallInRandomPlaceTest()
         {
             _ballsManager.CreateBallInRandomPlace();

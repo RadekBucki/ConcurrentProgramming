@@ -1,4 +1,6 @@
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace Data
@@ -7,29 +9,29 @@ namespace Data
     {
         private int _xPosition;
         private int _yPosition;
-        private int _radius;
-        private int _weight;
         private int _xSpeed;
         private int _ySpeed;
         public override event PropertyChangedEventHandler? PropertyChanged;
 
         public BallData(int xPosition, int yPosition, int radius, int weight, int xSpeed, int ySpeed)
         {
-            XPosition = xPosition;
-            YPosition = yPosition;
+            _xPosition = xPosition;
+            _yPosition = yPosition;
             XSpeed = xSpeed;
             YSpeed = ySpeed;
             Radius = radius;
             Weight = weight;
-            Thread ballThread = new Thread(StartMovement);
-            ballThread.IsBackground = true;
+            Thread ballThread = new(StartMovement)
+            {
+                IsBackground = true
+            };
             ballThread.Start();
         }
 
         public override int XPosition
         {
             get => _xPosition;
-            set
+            internal set
             {
                 _xPosition = value;
                 RaisePropertyChanged();
@@ -39,24 +41,16 @@ namespace Data
         public override int YPosition
         {
             get => _yPosition;
-            set
+            internal set
             {
                 _yPosition = value;
                 RaisePropertyChanged();
             }
         }
 
-        public override int Weight
-        {
-            get => _weight;
-            set => _weight = value;
-        }
+        public override int Weight { get; }
 
-        public override int Radius
-        {
-            get => _radius;
-            set => _radius = value;
-        }
+        public override int Radius { get; }
 
         public override int XSpeed
         {
@@ -78,29 +72,24 @@ namespace Data
             }
         }
 
-        public override void ChangeXSense()
+        [SuppressMessage("ReSharper", "FunctionNeverReturns")]
+        private void StartMovement()
         {
-            XSpeed *= -1;
-        }
-
-        public override void ChangeYSense()
-        {
-            YSpeed *= -1;
-        }
-
-        public override void StartMovement()
-        {
+            Stopwatch stopwatch = new();
             while (true)
             {
-                Move();
-                Thread.Sleep(8);
-            }
-        }
+                stopwatch.Start();
+                XPosition += XSpeed;
+                YPosition += YSpeed;
+                stopwatch.Stop();
 
-        public override void Move()
-        {
-            XPosition += XSpeed;
-            YPosition += YSpeed;
+                if ((int) stopwatch.ElapsedMilliseconds < 8)
+                {
+                    Thread.Sleep(8 - (int) stopwatch.ElapsedMilliseconds);
+                }
+
+                stopwatch.Reset();
+            }
         }
 
         private void RaisePropertyChanged([CallerMemberName] string? propertyName = null)

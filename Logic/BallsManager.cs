@@ -94,7 +94,7 @@ namespace Logic
             _dataLayer.RemoveAllBalls();
         }
 
-        public override void CheckCollision(Object s, PropertyChangedEventArgs e)
+        private void CheckCollision(object s, PropertyChangedEventArgs e)
         {
             IBallData ball = (IBallData) s;
 
@@ -110,14 +110,14 @@ namespace Logic
                 ball.XPosition + ball.XSpeed <= _ballRadius)
             {
                 _ballsLastCollision.Remove(ball);
-                ball.ChangeXSense();
+                ball.XSpeed *= -1;
             }
 
             if (ball.YPosition + ball.YSpeed >= _boardHeight - _ballRadius ||
                 ball.YPosition + ball.YSpeed <= _ballRadius)
             {
                 _ballsLastCollision.Remove(ball);
-                ball.ChangeYSense();
+                ball.YSpeed *= -1;
             }
         }
 
@@ -148,59 +148,53 @@ namespace Logic
                          ) <= _ballRadius * 2.0)
                        )
                     {
-                        int ball1StartXSpeed = ball1.XSpeed;
-                        int ball1StartYSpeed = ball1.YSpeed;
-                        int ball2StartXSpeed = ball2.XSpeed;
-                        int ball2StartYSpeed = ball2.YSpeed;
-                        ball1.YSpeed = ball2StartYSpeed;
-                        ball2.YSpeed = ball1StartYSpeed;
-                        ball1.XSpeed = ball2StartXSpeed;
-                        ball2.XSpeed = ball1StartXSpeed;
-                        if (ball1StartXSpeed * ball2StartXSpeed > 0)
+                        int ball1NewYSpeed = ball2.YSpeed;
+                        int ball2NewYSpeed = ball1.YSpeed;
+                        int ball1NewXSpeed = ball2.XSpeed;
+                        int ball2NewXSpeed = ball1.XSpeed;
+                        
+                        // Change sense
+                        if (ball1NewXSpeed * ball2NewXSpeed > 0)
                         {
-                            ChangeXSenseToOpposite(ball1StartXSpeed, ball1, ball2);
+                            switch (ball2NewXSpeed)
+                            {
+                                case > 0 when ball1.XPosition > ball2.XPosition:
+                                case < 0 when ball1.XPosition < ball2.XPosition:
+                                    ball2NewXSpeed *= -1;
+                                    break;
+                                case < 0 when ball1.XPosition < ball2.XPosition:
+                                case > 0 when ball1.XPosition > ball2.XPosition:
+                                    ball1NewXSpeed *= -1;
+                                    break;
+                            }
                         }
 
-                        if (ball1StartYSpeed * ball2StartYSpeed > 0)
+                        if (ball1NewYSpeed * ball2NewYSpeed > 0)
                         {
-                            ChangeYSenseToOpposite(ball1StartYSpeed, ball1, ball2);
+                            switch (ball2NewYSpeed)
+                            {
+                                case > 0 when ball1.YPosition > ball2.YPosition:
+                                case < 0 when ball1.YPosition < ball2.YPosition:
+                                    ball2NewYSpeed *= -1;
+                                    break;
+                                case < 0 when ball1.YPosition < ball2.YPosition:
+                                case > 0 when ball1.YPosition > ball2.YPosition:
+                                    ball1NewYSpeed *= -1;
+                                    break;
+                            }
                         }
+
+                        ball1.XSpeed = ball1NewXSpeed;
+                        ball1.YSpeed = ball1NewYSpeed;
+                        ball2.XSpeed = ball2NewXSpeed;
+                        ball2.YSpeed = ball2NewYSpeed;
+                        
                         _ballsLastCollision.Remove(ball1);
                         _ballsLastCollision.Remove(ball2);
                         _ballsLastCollision.Add(ball1, ball2);
                         _ballsLastCollision.Add(ball2, ball1);
                     }
                 }
-            }
-        }
-
-        private static void ChangeYSenseToOpposite(int ball1StartYSpeed, IBallData ball1, IBallData ball2)
-        {
-            switch (ball1StartYSpeed)
-            {
-                case > 0 when ball1.YPosition > ball2.YPosition:
-                case < 0 when ball1.YPosition < ball2.YPosition:
-                    ball2.ChangeYSense();
-                    break;
-                case < 0 when ball1.YPosition < ball2.YPosition:
-                case > 0 when ball1.YPosition > ball2.YPosition:
-                    ball1.ChangeYSense();
-                    break;
-            }
-        }
-
-        private static void ChangeXSenseToOpposite(int ball1StartXSpeed, IBallData ball1, IBallData ball2)
-        {
-            switch (ball1StartXSpeed)
-            {
-                case > 0 when ball1.XPosition > ball2.XPosition:
-                case < 0 when ball1.XPosition < ball2.XPosition:
-                    ball2.ChangeXSense();
-                    break;
-                case < 0 when ball1.XPosition < ball2.XPosition:
-                case > 0 when ball1.XPosition > ball2.XPosition:
-                    ball1.ChangeXSense();
-                    break;
             }
         }
     }
