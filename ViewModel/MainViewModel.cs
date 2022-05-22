@@ -73,7 +73,6 @@ namespace Presentation.ViewModel
             _modelLayer.ClearCircles();
             RaisePropertyChanged(nameof(Circles));
             DoChangeButtonEnabled();
-            Environment.Exit(0);
         }
 
         private void DoChangeButtonEnabled()

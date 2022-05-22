@@ -11,6 +11,7 @@ namespace Data
         private int _yPosition;
         private int _xSpeed;
         private int _ySpeed;
+        private bool _moving = true;
         public override event PropertyChangedEventHandler? PropertyChanged;
 
         public BallData(int xPosition, int yPosition, int radius, int weight, int xSpeed, int ySpeed)
@@ -72,11 +73,10 @@ namespace Data
             }
         }
 
-        [SuppressMessage("ReSharper", "FunctionNeverReturns")]
         private void StartMovement()
         {
             Stopwatch stopwatch = new();
-            while (true)
+            while (_moving)
             {
                 stopwatch.Start();
                 XPosition += XSpeed;
@@ -90,6 +90,11 @@ namespace Data
 
                 stopwatch.Reset();
             }
+        }
+
+        internal override void Stop()
+        {
+            _moving = false;
         }
 
         private void RaisePropertyChanged([CallerMemberName] string? propertyName = null)

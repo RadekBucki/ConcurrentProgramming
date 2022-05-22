@@ -20,8 +20,9 @@ internal class Logger
                                             "\t\t\t\"changed_property\": \"{2}\",\n" +
                                             "\t\t\t\"new_value\": {3}\n" +
                                             "\t\t}},";
-    
+
     private const string LogLinePattern = "\t\t\t\"{0}\": \"{1}\",\n";
+
     private const string CreateLogPattern = "\t\t{{\n" +
                                             "\t\t\t\"time_stamp\": \"{0}\",\n" +
                                             "\t\t\t\"object_id\": {1},\n" +
@@ -45,15 +46,16 @@ internal class Logger
     
     public void EndLogging()
     {
+        _fileLock = new();
         Write(EndPart);
     }
-    
+
     public void LogChange(object? s, PropertyChangedEventArgs e)
     {
         Log(
             string.Format(
-                ChangeLogPattern, 
-                DateTime.Now.ToString(CultureInfo.CurrentCulture) + ":" + DateTime.Now.Millisecond, 
+                ChangeLogPattern,
+                DateTime.Now.ToString(CultureInfo.CurrentCulture) + ":" + DateTime.Now.Millisecond,
                 s!.GetHashCode(), e.PropertyName, typeof(IBallData).GetProperty(e.PropertyName!)!.GetValue(s)
             )
         );

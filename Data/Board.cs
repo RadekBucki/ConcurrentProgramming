@@ -29,8 +29,10 @@
 
         public override void RemoveAllBalls()
         {
+            _ballsData.ForEach(ball => ball.Stop());
             _ballsData.Clear();
             _logger.EndLogging();
+            Environment.Exit(0);
         }
         public override int BoardWidth { get; }
         public override int BoardHeight { get; }
