@@ -16,17 +16,19 @@ internal class Logger
 
     private const string ChangeLogPattern = "\t\t{{\n" +
                                             "\t\t\t\"time_stamp\": \"{0}\",\n" +
-                                            "\t\t\t\"object_id\": {1},\n" +
-                                            "\t\t\t\"changed_property\": \"{2}\",\n" +
-                                            "\t\t\t\"new_value\": {3}\n" +
+                                            "\t\t\t\"object_type\": \"{1}\",\n" +
+                                            "\t\t\t\"object_id\": {2},\n" +
+                                            "\t\t\t\"changed_property\": \"{3}\",\n" +
+                                            "\t\t\t\"new_value\": {4}\n" +
                                             "\t\t}},";
 
     private const string LogLinePattern = "\t\t\t\"{0}\": \"{1}\",\n";
 
     private const string CreateLogPattern = "\t\t{{\n" +
                                             "\t\t\t\"time_stamp\": \"{0}\",\n" +
-                                            "\t\t\t\"object_id\": {1},\n" +
-                                            "{2}" +
+                                            "\t\t\t\"object_type\": \"{1}\",\n" +
+                                            "\t\t\t\"object_id\": {2},\n" +
+                                            "{3}" +
                                             "\t\t}},";
 
     private readonly string _fileName;
@@ -50,13 +52,13 @@ internal class Logger
         Write(EndPart);
     }
 
-    public void LogChange(object? s, PropertyChangedEventArgs e)
+    public void LogChange(object s, PropertyChangedEventArgs e)
     {
         Log(
             string.Format(
                 ChangeLogPattern,
-                DateTime.Now.ToString(CultureInfo.CurrentCulture) + ":" + DateTime.Now.Millisecond,
-                s!.GetHashCode(), e.PropertyName, typeof(IBallData).GetProperty(e.PropertyName!)!.GetValue(s)
+                DateTime.Now.ToString(CultureInfo.CurrentCulture) + ":" + DateTime.Now.Millisecond, s.GetType().Name,
+                s!.GetHashCode(), e.PropertyName, s.GetType().GetProperty(e.PropertyName!)!.GetValue(s)
             )
         );
     }
@@ -71,7 +73,7 @@ internal class Logger
         Log(
             string.Format(
                 CreateLogPattern, 
-                DateTime.Now.ToString(CultureInfo.CurrentCulture) + ":" + DateTime.Now.Millisecond, 
+                DateTime.Now.ToString(CultureInfo.CurrentCulture) + ":" + DateTime.Now.Millisecond, o.GetType().Name,
                 o!.GetHashCode(), sb.Remove(sb.Length - 2, 1)
             )
         );

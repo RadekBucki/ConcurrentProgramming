@@ -10,6 +10,7 @@
             BoardWidth = boardWidth;
             BoardHeight = boardHeight;
             _logger = new Logger();
+            _logger.LogCreate(this);
         }
 
         public override IBallData CreateBallData(int xPosition, int yPosition, int radius, int weight, int xSpeed = 0,
