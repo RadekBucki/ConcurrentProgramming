@@ -16,16 +16,6 @@ namespace DataTests
         }
 
         [TestMethod]
-        public void RemoveBallsTests()
-        {
-            _dataLayer.CreateBallData(10, 20, 10, 10);
-            _dataLayer.CreateBallData(20, 20, 10, 10);
-            Assert.AreEqual(2, _dataLayer.GetAllBalls().Count);
-            _dataLayer.RemoveAllBalls();
-            Assert.AreEqual(0, _dataLayer.GetAllBalls().Count);
-        }
-
-        [TestMethod]
         public void GetBoardDimensionsTest()
         {
             Assert.AreEqual(100, _dataLayer.BoardHeight);    

@@ -1,0 +1,119 @@
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Reflection;
+using System.Text;
+
+namespace Data;
+
+internal class Logger
+{
+    private const string StartPart = "{\n" +
+                                     "\t\"logs\": [";
+
+    private const string EndPart = "\t]\n" +
+                                   "}";
+
+    private const string ChangeLogPattern = "\t\t{{\n" +
+                                            "\t\t\t\"time_stamp\": \"{0}\",\n" +
+                                            "\t\t\t\"object_type\": \"{1}\",\n" +
+                                            "\t\t\t\"object_id\": {2},\n" +
+                                            "\t\t\t\"changed_property\": \"{3}\",\n" +
+                                            "\t\t\t\"new_value\": {4}\n" +
+                                            "\t\t}},";
+
+    private const string LogLinePattern = "\t\t\t\"{0}\": \"{1}\",\n";
+
+    private const string CreateLogPattern = "\t\t{{\n" +
+                                            "\t\t\t\"time_stamp\": \"{0}\",\n" +
+                                            "\t\t\t\"object_type\": \"{1}\",\n" +
+                                            "\t\t\t\"object_id\": {2},\n" +
+                                            "{3}" +
+                                            "\t\t}},";
+
+    private const string EventLogPattern = "\t\t{{\n" +
+                                           "\t\t\t\"time_stamp\": \"{0}\",\n" +
+                                           "\t\t\t\"event\": \"{1}\"\n\t\t" +
+                                           "}},";
+    
+    private const string CompletedLogPattern = "\t\t{{\n" +
+                                           "\t\t\t\"time_stamp\": \"{0}\",\n" +
+                                           "\t\t\t\"event\": \"Completed\"\n\t\t" +
+                                           "}}";
+
+    private readonly string _fileName;
+    private object _fileLock = new();
+
+    public Logger()
+    {
+        _fileName = "../../../../logs_" + DateTime.Now.ToFileTime() + ".json";
+
+        Write(StartPart);
+
+        LogEvent("Launched");
+    }
+
+    ~Logger()
+    {
+        EndLogging();
+    }
+
+    public void EndLogging()
+    {
+        if (!Monitor.TryEnter(_fileLock, new TimeSpan(0, 0, 1, 0))) return;
+        Log(string.Format(CompletedLogPattern, getTimestamp()));
+        Write(EndPart);
+    }
+
+    public void LogEvent(string name)
+    {
+        Log(string.Format(EventLogPattern, getTimestamp(), name));
+    }
+
+    public void LogChange(object s, PropertyChangedEventArgs e)
+    {
+        Log(
+            string.Format(
+                ChangeLogPattern,
+                getTimestamp(), s.GetType().Name, s.GetHashCode(), 
+                e.PropertyName, s.GetType().GetProperty(e.PropertyName!)!.GetValue(s)
+            )
+        );
+    }
+
+    public void LogCreate(object o)
+    {
+        StringBuilder sb = new();
+        foreach (PropertyInfo propertyInfo in o.GetType().GetProperties())
+        {
+            sb.AppendFormat(LogLinePattern, propertyInfo.Name, o.GetType().GetProperty(propertyInfo.Name)!.GetValue(o));
+        }
+
+        Log(
+            string.Format(
+                CreateLogPattern, getTimestamp(), o.GetType().Name, o.GetHashCode(), sb.Remove(sb.Length - 2, 1)
+            )
+        );
+    }
+
+    private string getTimestamp()
+    {
+        return DateTime.Now.ToString(CultureInfo.CurrentCulture) + ":" + DateTime.Now.Millisecond;
+    }
+
+    [SuppressMessage("ReSharper", "EmptyEmbeddedStatement")]
+    private void Log(string text)
+    {
+        lock (_fileLock)
+        {
+            Write(text);
+        }
+    }
+
+    private void Write(string text)
+    {
+        using StreamWriter writer = File.AppendText(_fileName);
+        writer.WriteLineAsync(text);
+        writer.Close();
+    }
+}
