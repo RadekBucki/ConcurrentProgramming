@@ -31,6 +31,16 @@ internal class Logger
                                             "{3}" +
                                             "\t\t}},";
 
+    private const string EventLogPattern = "\t\t{{\n" +
+                                           "\t\t\t\"time_stamp\": \"{0}\",\n" +
+                                           "\t\t\t\"event\": \"{1}\"\n\t\t" +
+                                           "}},";
+    
+    private const string CompletedLogPattern = "\t\t{{\n" +
+                                           "\t\t\t\"time_stamp\": \"{0}\",\n" +
+                                           "\t\t\t\"event\": \"Completed\"\n\t\t" +
+                                           "}}";
+
     private readonly string _fileName;
     private object _fileLock = new();
 
@@ -39,26 +49,25 @@ internal class Logger
         _fileName = "../../../../logs_" + DateTime.Now.ToFileTime() + ".json";
 
         Write(StartPart);
+
+        LogEvent("Launched");
     }
 
     ~Logger()
     {
         EndLogging();
     }
-    
+
     public void EndLogging()
     {
-        if (Monitor.TryEnter(_fileLock, new TimeSpan(0, 0, 1, 0)))
-        {
-            try
-            {
-                Write(EndPart);
-            }
-            finally
-            {
-                Monitor.Exit(_fileLock);
-            }
-        }
+        if (!Monitor.TryEnter(_fileLock, new TimeSpan(0, 0, 1, 0))) return;
+        Log(string.Format(CompletedLogPattern, getTimestamp()));
+        Write(EndPart);
+    }
+
+    public void LogEvent(string name)
+    {
+        Log(string.Format(EventLogPattern, getTimestamp(), name));
     }
 
     public void LogChange(object s, PropertyChangedEventArgs e)
@@ -66,8 +75,8 @@ internal class Logger
         Log(
             string.Format(
                 ChangeLogPattern,
-                DateTime.Now.ToString(CultureInfo.CurrentCulture) + ":" + DateTime.Now.Millisecond, s.GetType().Name,
-                s!.GetHashCode(), e.PropertyName, s.GetType().GetProperty(e.PropertyName!)!.GetValue(s)
+                getTimestamp(), s.GetType().Name, s.GetHashCode(), 
+                e.PropertyName, s.GetType().GetProperty(e.PropertyName!)!.GetValue(s)
             )
         );
     }
@@ -79,13 +88,17 @@ internal class Logger
         {
             sb.AppendFormat(LogLinePattern, propertyInfo.Name, o.GetType().GetProperty(propertyInfo.Name)!.GetValue(o));
         }
+
         Log(
             string.Format(
-                CreateLogPattern, 
-                DateTime.Now.ToString(CultureInfo.CurrentCulture) + ":" + DateTime.Now.Millisecond, o.GetType().Name,
-                o!.GetHashCode(), sb.Remove(sb.Length - 2, 1)
+                CreateLogPattern, getTimestamp(), o.GetType().Name, o.GetHashCode(), sb.Remove(sb.Length - 2, 1)
             )
         );
+    }
+
+    private string getTimestamp()
+    {
+        return DateTime.Now.ToString(CultureInfo.CurrentCulture) + ":" + DateTime.Now.Millisecond;
     }
 
     [SuppressMessage("ReSharper", "EmptyEmbeddedStatement")]
