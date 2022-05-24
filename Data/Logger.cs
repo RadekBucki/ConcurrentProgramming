@@ -14,29 +14,37 @@ internal class Logger
     private const string EndPart = "\t]\n" +
                                    "}";
 
-    private const string ChangeLogPattern = "\t\t{{\n" +
+    private const string ChangeLogPattern = ",\t\t{{\n" +
                                             "\t\t\t\"time_stamp\": \"{0}\",\n" +
                                             "\t\t\t\"object_id\": {1},\n" +
                                             "\t\t\t\"changed_property\": \"{2}\",\n" +
                                             "\t\t\t\"new_value\": {3}\n" +
-                                            "\t\t}},";
+                                            "\t\t}}";
 
     private const string LogLinePattern = "\t\t\t\"{0}\": \"{1}\",\n";
 
-    private const string CreateLogPattern = "\t\t{{\n" +
+    private const string FirstCreateLogPattern = "\t\t{{\n" +
                                             "\t\t\t\"time_stamp\": \"{0}\",\n" +
                                             "\t\t\t\"object_id\": {1},\n" +
                                             "{2}" +
-                                            "\t\t}},";
+                                            "\t\t}}";
+
+    private const string CreateLogPattern = ",\t\t{{\n" +
+                                            "\t\t\t\"time_stamp\": \"{0}\",\n" +
+                                            "\t\t\t\"object_id\": {1},\n" +
+                                            "{2}" +
+                                            "\t\t}}";
 
     private readonly string _fileName;
     private object _fileLock = new();
+    private bool _first = true;
 
     public Logger()
     {
         _fileName = "../../../../logs_" + DateTime.Now.ToFileTime() + ".json";
 
         Write(StartPart);
+        _first = true;
     }
 
     ~Logger()
@@ -77,13 +85,27 @@ internal class Logger
         {
             sb.AppendFormat(LogLinePattern, propertyInfo.Name, o.GetType().GetProperty(propertyInfo.Name)!.GetValue(o));
         }
-        Log(
-            string.Format(
-                CreateLogPattern, 
-                DateTime.Now.ToString(CultureInfo.CurrentCulture) + ":" + DateTime.Now.Millisecond, 
-                o!.GetHashCode(), sb.Remove(sb.Length - 2, 1)
-            )
-        );
+
+        if (_first)
+        {
+            Log(
+                string.Format(
+                    FirstCreateLogPattern, 
+                    DateTime.Now.ToString(CultureInfo.CurrentCulture) + ":" + DateTime.Now.Millisecond, 
+                    o!.GetHashCode(), sb.Remove(sb.Length - 2, 1)
+                )
+            );
+        }
+        else
+        {
+            Log(
+                string.Format(
+                    CreateLogPattern, 
+                    DateTime.Now.ToString(CultureInfo.CurrentCulture) + ":" + DateTime.Now.Millisecond, 
+                    o!.GetHashCode(), sb.Remove(sb.Length - 2, 1)
+                )
+            ); 
+        }
     }
 
     [SuppressMessage("ReSharper", "EmptyEmbeddedStatement")]
@@ -100,5 +122,6 @@ internal class Logger
         using StreamWriter writer = File.AppendText(_fileName);
         writer.WriteLineAsync(text);
         writer.Close();
+        _first = false;
     }
 }
