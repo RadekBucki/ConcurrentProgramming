@@ -48,8 +48,17 @@ internal class Logger
     
     public void EndLogging()
     {
-        _fileLock = new();
-        Write(EndPart);
+        if (Monitor.TryEnter(_fileLock, new TimeSpan(0, 0, 1, 0)))
+        {
+            try
+            {
+                Write(EndPart);
+            }
+            finally
+            {
+                Monitor.Exit(_fileLock);
+            }
+        }
     }
 
     public void LogChange(object s, PropertyChangedEventArgs e)
