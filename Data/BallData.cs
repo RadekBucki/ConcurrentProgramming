@@ -110,10 +110,13 @@ namespace Data
             [CallerMemberName] string? propertyName = null
         )
         {
-            LoggerPropertyChanged?.Invoke(
-                this,
-                new LoggerPropertyChangedEventArgs(propertyName, oldValue, newValue)
+            Thread thread = new(
+                () => LoggerPropertyChanged?.Invoke(
+                    this,
+                    new LoggerPropertyChangedEventArgs(propertyName, oldValue, newValue)
+                )
             );
+            thread.Start();
         }
     }
 }
