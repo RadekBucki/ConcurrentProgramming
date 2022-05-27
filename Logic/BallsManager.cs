@@ -97,8 +97,6 @@ namespace Logic
         private void CheckCollision(object s, PropertyChangedEventArgs e)
         {
             IBallData ball = (IBallData) s;
-
-            if (e.PropertyName is not ("XPosition" or "YPosition")) return;
             
             BallReflection(ball);
             WallReflection(ball);

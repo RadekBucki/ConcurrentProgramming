@@ -62,9 +62,8 @@ namespace Logic
         public override void UpdateBall(Object s, PropertyChangedEventArgs e)
         {
             IBallData ball = (IBallData) s;
-            GetType().GetProperty(e.PropertyName!)!.SetValue(
-                this, ball.GetType().GetProperty(e.PropertyName!)!.GetValue(ball)
-            );
+            XPosition = ball.XPosition;
+            YPosition = ball.YPosition;
         }
 
         public Ball(int xPosition, int yPosition, int radius, int weight, int xSpeed = 0, int ySpeed = 0)

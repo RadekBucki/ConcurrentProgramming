@@ -56,21 +56,13 @@ namespace Data
         public override int XSpeed
         {
             get => _xSpeed;
-            set
-            {
-                _xSpeed = value;
-                RaisePropertyChanged();
-            }
+            set => _xSpeed = value;
         }
 
         public override int YSpeed
         {
             get => _ySpeed;
-            set
-            {
-                _ySpeed = value;
-                RaisePropertyChanged();
-            }
+            set => _ySpeed = value;
         }
 
         private void StartMovement()
