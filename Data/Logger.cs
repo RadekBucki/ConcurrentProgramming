@@ -18,8 +18,8 @@ internal class Logger
                                             "\t\t\t\"time_stamp\": \"{0}\",\n" +
                                             "\t\t\t\"object_type\": \"{1}\",\n" +
                                             "\t\t\t\"object_id\": {2},\n" +
-                                            "\t\t\t\"changed_property\": \"{3}\",\n" +
-                                            "\t\t\t\"new_value\": {4}\n" +
+                                            "\t\t\t\"new_x_position\": {3},\n" +
+                                            "\t\t\t\"new_y_position\": {4}\n" +
                                             "\t\t}},";
 
     private const string LogLinePattern = "\t\t\t\"{0}\": \"{1}\",\n";
@@ -72,11 +72,12 @@ internal class Logger
 
     public void LogChange(object s, PropertyChangedEventArgs e)
     {
+        IBallData ball = (IBallData) s;
         Log(
             string.Format(
                 ChangeLogPattern,
                 getTimestamp(), s.GetType().Name, s.GetHashCode(), 
-                e.PropertyName, s.GetType().GetProperty(e.PropertyName!)!.GetValue(s)
+                ball.XPosition, ball.YPosition
             )
         );
     }

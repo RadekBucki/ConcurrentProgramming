@@ -16,8 +16,8 @@
             int ySpeed = 0)
         {
             IBallData ballData = IBallData.CreateBallData(xPosition, yPosition, radius, weight, xSpeed, ySpeed);
-            ballData.PropertyChanged += _logger.LogChange!;
             _logger.LogCreate(ballData);
+            ballData.PropertyChanged += _logger.LogChange!;
             _ballsData.Add(ballData);
             return ballData;
         }

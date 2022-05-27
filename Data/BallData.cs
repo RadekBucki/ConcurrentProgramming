@@ -22,10 +22,7 @@ namespace Data
             YSpeed = ySpeed;
             Radius = radius;
             Weight = weight;
-            Thread ballThread = new(StartMovement)
-            {
-                IsBackground = true
-            };
+            Thread ballThread = new(StartMovement);
             ballThread.Start();
         }
 
@@ -35,7 +32,6 @@ namespace Data
             internal set
             {
                 _xPosition = value;
-                RaisePropertyChanged();
             }
         }
 
@@ -45,7 +41,6 @@ namespace Data
             internal set
             {
                 _yPosition = value;
-                RaisePropertyChanged();
             }
         }
 
@@ -71,8 +66,12 @@ namespace Data
             while (_moving)
             {
                 stopwatch.Start();
-                XPosition += XSpeed;
-                YPosition += YSpeed;
+                lock (this)
+                {
+                    XPosition += XSpeed;
+                    YPosition += YSpeed;
+                }
+                RaisePropertyChanged("Position");
                 stopwatch.Stop();
 
                 if ((int) stopwatch.ElapsedMilliseconds < 8)
