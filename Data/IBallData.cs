@@ -11,6 +11,7 @@ public abstract class IBallData
     }
 
     public abstract event PropertyChangedEventHandler? PropertyChanged;
+    internal abstract event PropertyChangedEventHandler? LoggerPropertyChanged;
     public abstract int XPosition { get; internal set; }
     public abstract int YPosition { get; internal set; }
     public abstract int Weight { get; }
