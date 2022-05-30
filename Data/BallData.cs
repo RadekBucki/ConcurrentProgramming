@@ -23,6 +23,7 @@ namespace Data
             Radius = radius;
             Weight = weight;
             Thread ballThread = new(StartMovement);
+            ballThread.IsBackground = true;
             ballThread.Start();
         }
 
