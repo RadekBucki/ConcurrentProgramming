@@ -15,6 +15,8 @@ namespace Data
         public override event PropertyChangedEventHandler? PropertyChanged;
         internal override event PropertyChangedEventHandler? LoggerPropertyChanged;
 
+        private const int FluentMoveTime = 8;
+
         public BallData(int xPosition, int yPosition, int radius, int weight, int xSpeed, int ySpeed)
         {
             _xPosition = xPosition;
@@ -85,12 +87,12 @@ namespace Data
                     XPosition += XSpeed;
                     YPosition += YSpeed;
                 }
-                RaisePropertyChanged("Position");
+                RaisePropertyChanged();
                 stopwatch.Stop();
 
-                if ((int) stopwatch.ElapsedMilliseconds < 8)
+                if ((int) stopwatch.ElapsedMilliseconds < FluentMoveTime)
                 {
-                    Thread.Sleep(8 - (int) stopwatch.ElapsedMilliseconds);
+                    Thread.Sleep(FluentMoveTime - (int) stopwatch.ElapsedMilliseconds);
                 }
 
                 stopwatch.Reset();

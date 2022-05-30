@@ -61,13 +61,13 @@ internal class Logger
     public void EndLogging()
     {
         if (!Monitor.TryEnter(_fileLock, TimeSpan)) return;
-        Log(string.Format(CompletedLogPattern, getTimestamp()));
+        Log(string.Format(CompletedLogPattern, GetTimestamp()));
         Write(EndPart);
     }
 
     public void LogEvent(string name)
     {
-        Log(string.Format(EventLogPattern, getTimestamp(), name));
+        Log(string.Format(EventLogPattern, GetTimestamp(), name));
     }
 
     public void LogChange(object? s, PropertyChangedEventArgs propertyChangedEventArgs)
@@ -76,7 +76,7 @@ internal class Logger
         Log(
             string.Format(
                 ChangeLogPattern,
-                getTimestamp(), s?.GetType().Name, s?.GetHashCode(),
+                GetTimestamp(), s?.GetType().Name, s?.GetHashCode(),
                 e?.PropertyName, e?.OldValue, e?.NewValue
             )
         );
@@ -93,12 +93,12 @@ internal class Logger
 
         Log(
             string.Format(
-                CreateLogPattern, getTimestamp(), o.GetType().Name, o.GetHashCode(), sb.Remove(sb.Length - 2, 1)
+                CreateLogPattern, GetTimestamp(), o.GetType().Name, o.GetHashCode(), sb.Remove(sb.Length - 2, 1)
             )
         );
     }
 
-    private string getTimestamp()
+    private string GetTimestamp()
     {
         return DateTime.Now.ToString(CultureInfo.CurrentCulture) + ":" + DateTime.Now.Millisecond;
     }
