@@ -1,13 +1,13 @@
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
 
-namespace Data;
+namespace Data.Logger;
 
 internal class Logger
 {
+
     private const string StartPart = "{\n" +
                                      "\t\"logs\": [";
 
@@ -18,8 +18,9 @@ internal class Logger
                                             "\t\t\t\"time_stamp\": \"{0}\",\n" +
                                             "\t\t\t\"object_type\": \"{1}\",\n" +
                                             "\t\t\t\"object_id\": {2},\n" +
-                                            "\t\t\t\"new_x_position\": {3},\n" +
-                                            "\t\t\t\"new_y_position\": {4}\n" +
+                                            "\t\t\t\"changed_property\": \"{3}\",\n" +
+                                            "\t\t\t\"old_value\": {4},\n" +
+                                            "\t\t\t\"new_value\": {5}\n" +
                                             "\t\t}},";
 
     private const string LogLinePattern = "\t\t\t\"{0}\": \"{1}\",\n";
@@ -35,32 +36,31 @@ internal class Logger
                                            "\t\t\t\"time_stamp\": \"{0}\",\n" +
                                            "\t\t\t\"event\": \"{1}\"\n\t\t" +
                                            "}},";
-    
+
     private const string CompletedLogPattern = "\t\t{{\n" +
-                                           "\t\t\t\"time_stamp\": \"{0}\",\n" +
-                                           "\t\t\t\"event\": \"Completed\"\n\t\t" +
-                                           "}}";
+                                               "\t\t\t\"time_stamp\": \"{0}\",\n" +
+                                               "\t\t\t\"event\": \"Completed\"\n\t\t" +
+                                               "}}";
+    
+    private static readonly TimeSpan TimeSpan = new(0, 0, 1, 0);
+
+    private const string FileLocationPattern = "../../../../logs_{0}.json";
 
     private readonly string _fileName;
     private object _fileLock = new();
 
     public Logger()
     {
-        _fileName = "../../../../logs_" + DateTime.Now.ToFileTime() + ".json";
+        _fileName = string.Format(FileLocationPattern, DateTime.Now.ToFileTime());
 
         Write(StartPart);
 
         LogEvent("Launched");
     }
 
-    ~Logger()
-    {
-        EndLogging();
-    }
-
     public void EndLogging()
     {
-        if (!Monitor.TryEnter(_fileLock, new TimeSpan(0, 0, 1, 0))) return;
+        if (!Monitor.TryEnter(_fileLock, TimeSpan)) return;
         Log(string.Format(CompletedLogPattern, getTimestamp()));
         Write(EndPart);
     }
@@ -70,14 +70,14 @@ internal class Logger
         Log(string.Format(EventLogPattern, getTimestamp(), name));
     }
 
-    public void LogChange(object s, PropertyChangedEventArgs e)
+    public void LogChange(object? s, PropertyChangedEventArgs propertyChangedEventArgs)
     {
-        IBallData ball = (IBallData) s;
+        LoggerPropertyChangedEventArgs? e = propertyChangedEventArgs as LoggerPropertyChangedEventArgs;
         Log(
             string.Format(
                 ChangeLogPattern,
-                getTimestamp(), s.GetType().Name, s.GetHashCode(), 
-                ball.XPosition, ball.YPosition
+                getTimestamp(), s?.GetType().Name, s?.GetHashCode(),
+                e?.PropertyName, e?.OldValue, e?.NewValue
             )
         );
     }
@@ -87,7 +87,8 @@ internal class Logger
         StringBuilder sb = new();
         foreach (PropertyInfo propertyInfo in o.GetType().GetProperties())
         {
-            sb.AppendFormat(LogLinePattern, propertyInfo.Name, o.GetType().GetProperty(propertyInfo.Name)!.GetValue(o));
+            sb.AppendFormat(LogLinePattern, propertyInfo.Name,
+                o.GetType().GetProperty(propertyInfo.Name)!.GetValue(o));
         }
 
         Log(
@@ -101,8 +102,7 @@ internal class Logger
     {
         return DateTime.Now.ToString(CultureInfo.CurrentCulture) + ":" + DateTime.Now.Millisecond;
     }
-
-    [SuppressMessage("ReSharper", "EmptyEmbeddedStatement")]
+        
     private void Log(string text)
     {
         lock (_fileLock)
