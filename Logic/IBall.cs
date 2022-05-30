@@ -18,13 +18,7 @@ namespace Logic
 
         public abstract int YPosition { get; set; }
 
-        public abstract int Weight { get; set; }
-        
         public abstract int Radius { get; set; }
-
-        public abstract int XSpeed { get; set; }
-
-        public abstract int YSpeed { get; set; }
 
         public abstract void UpdateBall(Object s, PropertyChangedEventArgs e);
     }

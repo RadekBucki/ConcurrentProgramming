@@ -9,8 +9,6 @@ namespace Data
     {
         private int _xPosition;
         private int _yPosition;
-        private int _xSpeed;
-        private int _ySpeed;
         private bool _moving = true;
         public override event PropertyChangedEventHandler? PropertyChanged;
 
@@ -30,36 +28,22 @@ namespace Data
         public override int XPosition
         {
             get => _xPosition;
-            internal set
-            {
-                _xPosition = value;
-            }
+            internal set => _xPosition = value;
         }
 
         public override int YPosition
         {
             get => _yPosition;
-            internal set
-            {
-                _yPosition = value;
-            }
+            internal set => _yPosition = value;
         }
 
         public override int Weight { get; }
 
         public override int Radius { get; }
 
-        public override int XSpeed
-        {
-            get => _xSpeed;
-            set => _xSpeed = value;
-        }
+        public override int XSpeed { get; set; }
 
-        public override int YSpeed
-        {
-            get => _ySpeed;
-            set => _ySpeed = value;
-        }
+        public override int YSpeed { get; set; }
 
         private void StartMovement()
         {
