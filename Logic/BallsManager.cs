@@ -97,8 +97,6 @@ namespace Logic
         private void CheckCollision(object s, PropertyChangedEventArgs e)
         {
             IBallData ball = (IBallData) s;
-
-            if (e.PropertyName is not ("XPosition" or "YPosition")) return;
             
             BallReflection(ball);
             WallReflection(ball);
@@ -134,17 +132,32 @@ namespace Logic
                     {
                         continue;
                     }
-                    
+
+                    int ball1XPosition;
+                    int ball1YPosition;
+                    int ball2XPosition;
+                    int ball2YPosition;
+                    lock (ball1)
+                    {
+                        ball1XPosition = ball1.XPosition;
+                        ball1YPosition = ball1.YPosition;
+                    }
+                    lock (ball2)
+                    {
+                        ball2XPosition = ball2.XPosition;
+                        ball2YPosition = ball2.YPosition;
+                    }
+
                     if ( //condition of circles external contact: (r_1 + r_2) <= |AB|
                         (Math.Abs(Math.Sqrt(
-                             (ball1.XPosition - ball2.XPosition) * (ball1.XPosition - ball2.XPosition) +
-                             (ball1.YPosition - ball2.YPosition) * (ball1.YPosition - ball2.YPosition)
+                             (ball1XPosition - ball2XPosition) * (ball1XPosition - ball2XPosition) +
+                             (ball1YPosition - ball2YPosition) * (ball1YPosition - ball2YPosition)
                          )) <= _ballRadius * 2.0 ||
                          Math.Sqrt(
-                             (ball1.XPosition + ball1.XSpeed - ball2.XPosition + ball2.XSpeed) *
-                             (ball1.XPosition + ball1.XSpeed - ball2.XPosition + ball2.XSpeed) +
-                             (ball1.YPosition + ball1.YSpeed - ball2.YPosition + ball2.YSpeed) *
-                             (ball1.YPosition + ball1.YSpeed - ball2.YPosition + ball2.YSpeed)
+                             (ball1XPosition + ball1.XSpeed - ball2XPosition + ball2.XSpeed) *
+                             (ball1XPosition + ball1.XSpeed - ball2XPosition + ball2.XSpeed) +
+                             (ball1YPosition + ball1.YSpeed - ball2YPosition + ball2.YSpeed) *
+                             (ball1YPosition + ball1.YSpeed - ball2YPosition + ball2.YSpeed)
                          ) <= _ballRadius * 2.0)
                        )
                     {
@@ -158,12 +171,12 @@ namespace Logic
                         {
                             switch (ball2NewXSpeed)
                             {
-                                case > 0 when ball1.XPosition > ball2.XPosition:
-                                case < 0 when ball1.XPosition < ball2.XPosition:
+                                case > 0 when ball1XPosition > ball2XPosition:
+                                case < 0 when ball1XPosition < ball2XPosition:
                                     ball2NewXSpeed *= -1;
                                     break;
-                                case < 0 when ball1.XPosition < ball2.XPosition:
-                                case > 0 when ball1.XPosition > ball2.XPosition:
+                                case < 0 when ball1XPosition < ball2XPosition:
+                                case > 0 when ball1XPosition > ball2XPosition:
                                     ball1NewXSpeed *= -1;
                                     break;
                             }
@@ -173,12 +186,12 @@ namespace Logic
                         {
                             switch (ball2NewYSpeed)
                             {
-                                case > 0 when ball1.YPosition > ball2.YPosition:
-                                case < 0 when ball1.YPosition < ball2.YPosition:
+                                case > 0 when ball1YPosition > ball2YPosition:
+                                case < 0 when ball1YPosition < ball2YPosition:
                                     ball2NewYSpeed *= -1;
                                     break;
-                                case < 0 when ball1.YPosition < ball2.YPosition:
-                                case > 0 when ball1.YPosition > ball2.YPosition:
+                                case < 0 when ball1YPosition < ball2YPosition:
+                                case > 0 when ball1YPosition > ball2YPosition:
                                     ball1NewYSpeed *= -1;
                                     break;
                             }

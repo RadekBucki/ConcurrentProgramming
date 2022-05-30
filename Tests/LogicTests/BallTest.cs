@@ -13,10 +13,7 @@ namespace LogicTests
         {
             Assert.AreEqual(1, _ball.XPosition);
             Assert.AreEqual(2, _ball.YPosition);
-            Assert.AreEqual(0, _ball.XSpeed);
-            Assert.AreEqual(0, _ball.YSpeed);
             Assert.AreEqual(1, _ball.Radius);
-            Assert.AreEqual(1, _ball.Weight);
         }
 
         [TestMethod]
@@ -29,26 +26,10 @@ namespace LogicTests
         }
 
         [TestMethod]
-        public void SetBallSpeedTest()
-        {
-            _ball.XSpeed = 2;
-            _ball.YSpeed = 3;
-            Assert.AreEqual(2, _ball.XSpeed);
-            Assert.AreEqual(3, _ball.YSpeed);
-        }
-
-        [TestMethod]
         public void SetRadiusTest()
         {
             _ball.Radius = 2;
             Assert.AreEqual(2, _ball.Radius);
-        }
-
-        [TestMethod]
-        public void SetWeightTest()
-        {
-            _ball.Weight = 2;
-            Assert.AreEqual(2, _ball.Weight);
         }
     }
 }

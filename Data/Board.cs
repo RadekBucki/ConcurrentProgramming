@@ -16,8 +16,8 @@
             int ySpeed = 0)
         {
             IBallData ballData = IBallData.CreateBallData(xPosition, yPosition, radius, weight, xSpeed, ySpeed);
-            ballData.LoggerPropertyChanged += _logger.LogChange;
             _logger.LogCreate(ballData);
+            ballData.LoggerPropertyChanged += _logger.LogChange;
             _ballsData.Add(ballData);
             return ballData;
         }
@@ -32,7 +32,6 @@
             _ballsData.ForEach(ball => ball.Stop());
             _ballsData.Clear();
             _logger.EndLogging();
-            Environment.Exit(0);
         }
         public override int BoardWidth { get; }
         public override int BoardHeight { get; }

@@ -8,7 +8,6 @@ namespace Presentation.Model
     {
         private int _x;
         private int _y;
-        private int _radius;
 
         public override int X
         {
@@ -30,11 +29,7 @@ namespace Presentation.Model
             }
         }
 
-        public override int Radius
-        {
-            get => _radius;
-            set => _radius = value;
-        }
+        public override int Radius { get; set; }
 
         public override event PropertyChangedEventHandler? PropertyChanged;
 
@@ -48,14 +43,8 @@ namespace Presentation.Model
         public override void UpdateCircle(Object s, PropertyChangedEventArgs e)
         {
             IBall ball = (IBall) s;
-            if (e.PropertyName == "XPosition")
-            {
-                X = ball.XPosition;
-            }
-            else if (e.PropertyName == "YPosition")
-            {
-                Y = ball.YPosition;
-            }
+            X = ball.XPosition;
+            Y = ball.YPosition;
         }
 
         private void RaisePropertyChanged([CallerMemberName] string? propertyName = null)
