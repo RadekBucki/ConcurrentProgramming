@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using Data.Logger;
 
 namespace Data
 {
@@ -13,6 +13,7 @@ namespace Data
         private int _ySpeed;
         private bool _moving = true;
         public override event PropertyChangedEventHandler? PropertyChanged;
+        internal override event PropertyChangedEventHandler? LoggerPropertyChanged;
 
         public BallData(int xPosition, int yPosition, int radius, int weight, int xSpeed, int ySpeed)
         {
@@ -34,6 +35,7 @@ namespace Data
             get => _xPosition;
             internal set
             {
+                OnLoggerPropertyChanged(_xPosition, value);
                 _xPosition = value;
                 RaisePropertyChanged();
             }
@@ -44,6 +46,7 @@ namespace Data
             get => _yPosition;
             internal set
             {
+                OnLoggerPropertyChanged(_yPosition, value);
                 _yPosition = value;
                 RaisePropertyChanged();
             }
@@ -58,8 +61,8 @@ namespace Data
             get => _xSpeed;
             set
             {
+                OnLoggerPropertyChanged(_xSpeed, value);
                 _xSpeed = value;
-                RaisePropertyChanged();
             }
         }
 
@@ -68,8 +71,8 @@ namespace Data
             get => _ySpeed;
             set
             {
+                OnLoggerPropertyChanged(_ySpeed, value);
                 _ySpeed = value;
-                RaisePropertyChanged();
             }
         }
 
@@ -100,6 +103,20 @@ namespace Data
         private void RaisePropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private void OnLoggerPropertyChanged(
+            object oldValue, object newValue,
+            [CallerMemberName] string? propertyName = null
+        )
+        {
+            Thread thread = new(
+                () => LoggerPropertyChanged?.Invoke(
+                    this,
+                    new LoggerPropertyChangedEventArgs(propertyName, oldValue, newValue)
+                )
+            );
+            thread.Start();
         }
     }
 }

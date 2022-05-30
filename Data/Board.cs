@@ -3,20 +3,20 @@
     internal class Board : DataAbstractApi
     {
         private List<IBallData> _ballsData = new();
-        private Logger _logger;
+        private Logger.Logger _logger;
 
         public Board(int boardWidth, int boardHeight)
         {
             BoardWidth = boardWidth;
             BoardHeight = boardHeight;
-            _logger = new Logger();
+            _logger = new Logger.Logger();
         }
 
         public override IBallData CreateBallData(int xPosition, int yPosition, int radius, int weight, int xSpeed = 0,
             int ySpeed = 0)
         {
             IBallData ballData = IBallData.CreateBallData(xPosition, yPosition, radius, weight, xSpeed, ySpeed);
-            ballData.PropertyChanged += _logger.LogChange!;
+            ballData.LoggerPropertyChanged += _logger.LogChange;
             _logger.LogCreate(ballData);
             _ballsData.Add(ballData);
             return ballData;
