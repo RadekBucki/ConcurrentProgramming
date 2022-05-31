@@ -17,7 +17,8 @@ namespace Data
 
         private const int FluentMoveTime = 8;
 
-        public BallData(int xPosition, int yPosition, int radius, int weight, int xSpeed, int ySpeed)
+        public BallData(int xPosition, int yPosition, int radius, int weight,
+            PropertyChangedEventHandler logChange, int xSpeed, int ySpeed)
         {
             _xPosition = xPosition;
             _yPosition = yPosition;
@@ -25,6 +26,7 @@ namespace Data
             YSpeed = ySpeed;
             Radius = radius;
             Weight = weight;
+            LoggerPropertyChanged += logChange;
             Thread ballThread = new(StartMovement)
             {
                 IsBackground = true

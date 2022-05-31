@@ -15,9 +15,10 @@
         public override IBallData CreateBallData(int xPosition, int yPosition, int radius, int weight, int xSpeed = 0,
             int ySpeed = 0)
         {
-            IBallData ballData = IBallData.CreateBallData(xPosition, yPosition, radius, weight, xSpeed, ySpeed);
+            IBallData ballData = IBallData.CreateBallData(
+                xPosition, yPosition, radius, weight, _logger.LogChange, xSpeed, ySpeed
+                );
             _logger.LogCreate(ballData);
-            ballData.LoggerPropertyChanged += _logger.LogChange;
             _ballsData.Add(ballData);
             return ballData;
         }

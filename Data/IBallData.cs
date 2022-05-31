@@ -4,10 +4,13 @@ namespace Data;
 
 public abstract class IBallData
 {
-    public static IBallData CreateBallData(int xPosition, int yPosition, int radius, int weight, int xSpeed = 0,
-        int ySpeed = 0)
+    public static IBallData CreateBallData(int xPosition, int yPosition, int radius, int weight, 
+        PropertyChangedEventHandler logChange, int xSpeed = 0, int ySpeed = 0)
     {
-        return new BallData(xPosition, yPosition, radius, weight, xSpeed, ySpeed);
+        return new BallData(
+            xPosition, yPosition, radius, weight, 
+            logChange, xSpeed, ySpeed
+            );
     }
 
     public abstract event PropertyChangedEventHandler? PropertyChanged;
