@@ -17,13 +17,13 @@ namespace Logic
 
         public override void UpdateBall(Object s, PropertyChangedEventArgs e)
         {
-            IBallData ball = (IBallData) s;
-            XPosition = ball.XPosition;
-            YPosition = ball.YPosition;
+            IBallDataChangedEventArgs args = (IBallDataChangedEventArgs) e;
+            XPosition = args.X;
+            YPosition = args.Y;
             RaisePropertyChanged();
         }
 
-        public Ball(int xPosition, int yPosition, int radius, int weight, int xSpeed = 0, int ySpeed = 0)
+        public Ball(int xPosition, int yPosition, int radius)
         {
             XPosition = xPosition;
             YPosition = yPosition;
@@ -32,7 +32,7 @@ namespace Logic
 
         private void RaisePropertyChanged([CallerMemberName] string? propertyName = null)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new BallChangedEventArgs(propertyName, XPosition, YPosition));
         }
     }
 }

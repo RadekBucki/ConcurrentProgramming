@@ -16,7 +16,7 @@ namespace Logic
         private const int BoardToBallRatio = 50;
         private const int BallWeight = 100;
         private List<IBall> _balls = new();
-        private Dictionary <IBallData, IBallData> _ballsLastCollision = new();
+        private Dictionary<IBallData, IBallData> _ballsLastCollision = new();
         private readonly object _syncObject = new();
 
         public BallsManager(DataAbstractApi dataLayer)
@@ -47,8 +47,7 @@ namespace Logic
             }
 
             IBallData ballData = _dataLayer.CreateBallData(x, y, _ballRadius, BallWeight, xSpeed, ySpeed);
-            IBall ball = IBall.CreateBall(ballData.XPosition, ballData.YPosition, ballData.Radius, ballData.Weight,
-                ballData.XSpeed, ballData.YSpeed);
+            IBall ball = IBall.CreateBall(ballData.XPosition, ballData.YPosition, ballData.Radius);
             ballData.PropertyChanged += ball.UpdateBall!;
             ballData.PropertyChanged += CheckCollision!;
             _balls.Add(ball);
@@ -96,52 +95,49 @@ namespace Logic
 
         private void CheckCollision(object s, PropertyChangedEventArgs e)
         {
+            IBallDataChangedEventArgs args = (IBallDataChangedEventArgs) e;
             IBallData ball = (IBallData) s;
-            
-            BallReflection(ball);
-            WallReflection(ball);
+
+            BallReflection(ball, args.X, args.Y);
+            WallReflection(ball, args.X, args.Y);
         }
 
-        private void WallReflection(IBallData ball)
+        private void WallReflection(IBallData ball, int x, int y)
         {
-            if (ball.XPosition + ball.XSpeed >= _boardWidth - _ballRadius ||
-                ball.XPosition + ball.XSpeed <= _ballRadius)
+            if (x + ball.XSpeed >= _boardWidth - _ballRadius ||
+                x + ball.XSpeed <= _ballRadius)
             {
                 _ballsLastCollision.Remove(ball);
                 ball.XSpeed *= -1;
             }
 
-            if (ball.YPosition + ball.YSpeed >= _boardHeight - _ballRadius ||
-                ball.YPosition + ball.YSpeed <= _ballRadius)
+            if (y + ball.YSpeed >= _boardHeight - _ballRadius ||
+                y + ball.YSpeed <= _ballRadius)
             {
                 _ballsLastCollision.Remove(ball);
                 ball.YSpeed *= -1;
             }
         }
 
-        private void BallReflection(IBallData ball1)
+        private void BallReflection(IBallData ball1, int x, int y)
         {
             lock (_syncObject)
             {
                 foreach (IBallData ball2 in _dataLayer.GetAllBalls().ToArray())
                 {
                     IBallData lastBall1, lastBall2;
-                    if ((_ballsLastCollision.TryGetValue(ball1, out lastBall1!) && 
-                        _ballsLastCollision.TryGetValue(ball2, out lastBall2!) &&
-                        lastBall1 == ball2 && lastBall2 == ball1) || ball1.Equals(ball2))
+                    if ((_ballsLastCollision.TryGetValue(ball1, out lastBall1!) &&
+                         _ballsLastCollision.TryGetValue(ball2, out lastBall2!) &&
+                         lastBall1 == ball2 && lastBall2 == ball1) || ball1.Equals(ball2))
                     {
                         continue;
                     }
 
-                    int ball1XPosition;
-                    int ball1YPosition;
+                    int ball1XPosition = x;
+                    int ball1YPosition = y;
                     int ball2XPosition;
                     int ball2YPosition;
-                    lock (ball1)
-                    {
-                        ball1XPosition = ball1.XPosition;
-                        ball1YPosition = ball1.YPosition;
-                    }
+
                     lock (ball2)
                     {
                         ball2XPosition = ball2.XPosition;
@@ -165,7 +161,7 @@ namespace Logic
                         int ball2NewYSpeed = ball1.YSpeed;
                         int ball1NewXSpeed = ball2.XSpeed;
                         int ball2NewXSpeed = ball1.XSpeed;
-                        
+
                         // Change sense
                         if (ball1NewXSpeed * ball2NewXSpeed > 0)
                         {
@@ -201,7 +197,7 @@ namespace Logic
                         ball1.YSpeed = ball1NewYSpeed;
                         ball2.XSpeed = ball2NewXSpeed;
                         ball2.YSpeed = ball2NewYSpeed;
-                        
+
                         _ballsLastCollision.Remove(ball1);
                         _ballsLastCollision.Remove(ball2);
                         _ballsLastCollision.Add(ball1, ball2);
