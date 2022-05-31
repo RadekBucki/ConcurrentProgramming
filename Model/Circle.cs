@@ -42,9 +42,9 @@ namespace Presentation.Model
 
         public override void UpdateCircle(Object s, PropertyChangedEventArgs e)
         {
-            IBall ball = (IBall) s;
-            X = ball.XPosition;
-            Y = ball.YPosition;
+            IBallChangedEventArgs args = (IBallChangedEventArgs) e;
+            X = args.X;
+            Y = args.Y;
         }
 
         private void RaisePropertyChanged([CallerMemberName] string? propertyName = null)

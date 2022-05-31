@@ -6,7 +6,7 @@ namespace LogicTests
     [TestClass]
     public class BallTest
     {
-        private IBall _ball = IBall.CreateBall(1, 2, 1, 1);
+        private IBall _ball = IBall.CreateBall(1, 2, 1);
 
         [TestMethod]
         public void CreateBallTest()
