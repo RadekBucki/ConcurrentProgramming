@@ -19,6 +19,7 @@
             _logger.LogCreate(ballData);
             ballData.LoggerPropertyChanged += _logger.LogChange;
             _ballsData.Add(ballData);
+            ballData.StartBall();
             return ballData;
         }
 

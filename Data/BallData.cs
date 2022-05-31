@@ -12,6 +12,7 @@ namespace Data
         private int _xSpeed;
         private int _ySpeed;
         private bool _moving = true;
+        private Thread _mover;
         public override event PropertyChangedEventHandler? PropertyChanged;
         internal override event PropertyChangedEventHandler? LoggerPropertyChanged;
 
@@ -25,11 +26,10 @@ namespace Data
             YSpeed = ySpeed;
             Radius = radius;
             Weight = weight;
-            Thread ballThread = new(StartMovement)
+            _mover = new(StartMovement)
             {
                 IsBackground = true
             };
-            ballThread.Start();
         }
 
         public override int XPosition
@@ -74,6 +74,11 @@ namespace Data
                 OnLoggerPropertyChanged(_ySpeed, value);
                 _ySpeed = value;
             }
+        }
+
+        public override void StartBall()
+        {
+            _mover.Start();
         }
 
         private void StartMovement()

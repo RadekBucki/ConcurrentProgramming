@@ -18,5 +18,6 @@ public abstract class IBallData
     public abstract int Radius { get; }
     public abstract int XSpeed { get; set; }
     public abstract int YSpeed { get; set; }
+    public abstract void StartBall();
     internal abstract void Stop();
 }
