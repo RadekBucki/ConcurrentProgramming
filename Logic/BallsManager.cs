@@ -104,15 +104,15 @@ namespace Logic
 
         private void WallReflection(IBallData ball, int x, int y)
         {
-            if (x + ball.XSpeed >= _boardWidth - _ballRadius ||
-                x + ball.XSpeed <= _ballRadius)
+            if (x + ball.XSpeed > _boardWidth - _ballRadius ||
+                x + ball.XSpeed < _ballRadius)
             {
                 _ballsLastCollision.Remove(ball);
                 ball.XSpeed *= -1;
             }
 
-            if (y + ball.YSpeed >= _boardHeight - _ballRadius ||
-                y + ball.YSpeed <= _ballRadius)
+            if (y + ball.YSpeed > _boardHeight - _ballRadius ||
+                y + ball.YSpeed < _ballRadius)
             {
                 _ballsLastCollision.Remove(ball);
                 ball.YSpeed *= -1;
@@ -154,7 +154,7 @@ namespace Logic
                              (ball1XPosition + ball1.XSpeed - ball2XPosition + ball2.XSpeed) +
                              (ball1YPosition + ball1.YSpeed - ball2YPosition + ball2.YSpeed) *
                              (ball1YPosition + ball1.YSpeed - ball2YPosition + ball2.YSpeed)
-                         ) <= _ballRadius * 2.0)
+                         ) < _ballRadius * 2.0)
                        )
                     {
                         int ball1NewYSpeed = ball2.YSpeed;

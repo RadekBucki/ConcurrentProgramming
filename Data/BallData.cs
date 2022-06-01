@@ -76,7 +76,7 @@ namespace Data
             }
         }
 
-        public override void StartBall()
+        internal override void StartBall()
         {
             _mover.Start();
         }
