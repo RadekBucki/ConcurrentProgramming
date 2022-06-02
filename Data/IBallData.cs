@@ -11,14 +11,13 @@ public abstract class IBallData
     }
 
     public abstract event PropertyChangedEventHandler? PropertyChanged;
-    public abstract int XPosition { get; set; }
-    public abstract int YPosition { get; set; }
-    public abstract int Weight { get; set; }
-    public abstract int Radius { get; set; }
+    internal abstract event PropertyChangedEventHandler? LoggerPropertyChanged;
+    public abstract int XPosition { get; internal set; }
+    public abstract int YPosition { get; internal set; }
+    public abstract int Weight { get; }
+    public abstract int Radius { get; }
     public abstract int XSpeed { get; set; }
     public abstract int YSpeed { get; set; }
-    public abstract void ChangeXSense();
-    public abstract void ChangeYSense();
-    public abstract void StartMovement();
-    public abstract void Move();
+    internal abstract void StartBall();
+    internal abstract void Stop();
 }

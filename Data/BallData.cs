@@ -1,5 +1,7 @@
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using Data.Logger;
 
 namespace Data
 {
@@ -7,64 +9,60 @@ namespace Data
     {
         private int _xPosition;
         private int _yPosition;
-        private int _radius;
-        private int _weight;
         private int _xSpeed;
         private int _ySpeed;
+        private bool _moving = true;
+        private Thread _mover;
         public override event PropertyChangedEventHandler? PropertyChanged;
+        internal override event PropertyChangedEventHandler? LoggerPropertyChanged;
+
+        private const int FluentMoveTime = 8;
 
         public BallData(int xPosition, int yPosition, int radius, int weight, int xSpeed, int ySpeed)
         {
-            XPosition = xPosition;
-            YPosition = yPosition;
-            XSpeed = xSpeed;
-            YSpeed = ySpeed;
+            _xPosition = xPosition;
+            _yPosition = yPosition;
+            _xSpeed = xSpeed;
+            _ySpeed = ySpeed;
             Radius = radius;
             Weight = weight;
-            Thread ballThread = new Thread(StartMovement);
-            ballThread.IsBackground = true;
-            ballThread.Start();
+            _mover = new(StartMovement)
+            {
+                IsBackground = true
+            };
         }
 
         public override int XPosition
         {
             get => _xPosition;
-            set
+            internal set
             {
+                OnLoggerPropertyChanged(_xPosition, value);
                 _xPosition = value;
-                RaisePropertyChanged();
             }
         }
 
         public override int YPosition
         {
             get => _yPosition;
-            set
+            internal set
             {
+                OnLoggerPropertyChanged(_yPosition, value);
                 _yPosition = value;
-                RaisePropertyChanged();
             }
         }
 
-        public override int Weight
-        {
-            get => _weight;
-            set => _weight = value;
-        }
+        public override int Weight { get; }
 
-        public override int Radius
-        {
-            get => _radius;
-            set => _radius = value;
-        }
+        public override int Radius { get; }
 
         public override int XSpeed
         {
             get => _xSpeed;
             set
             {
+                OnLoggerPropertyChanged(_xSpeed, value);
                 _xSpeed = value;
-                RaisePropertyChanged();
             }
         }
 
@@ -73,39 +71,63 @@ namespace Data
             get => _ySpeed;
             set
             {
+                OnLoggerPropertyChanged(_ySpeed, value);
                 _ySpeed = value;
-                RaisePropertyChanged();
             }
         }
 
-        public override void ChangeXSense()
+        internal override void StartBall()
         {
-            XSpeed *= -1;
+            _mover.Start();
         }
 
-        public override void ChangeYSense()
+        private void StartMovement()
         {
-            YSpeed *= -1;
-        }
-
-        public override void StartMovement()
-        {
-            while (true)
+            Stopwatch stopwatch = new();
+            while (_moving)
             {
-                Move();
-                Thread.Sleep(8);
+                stopwatch.Start();
+
+                lock (this)
+                {
+                    XPosition += XSpeed;
+                    YPosition += YSpeed;
+                }
+                RaisePropertyChanged();
+
+                stopwatch.Stop();
+
+                if ((int) stopwatch.ElapsedMilliseconds < FluentMoveTime)
+                {
+                    Thread.Sleep(FluentMoveTime - (int) stopwatch.ElapsedMilliseconds);
+                }
+
+                stopwatch.Reset();
             }
         }
 
-        public override void Move()
+        internal override void Stop()
         {
-            XPosition += XSpeed;
-            YPosition += YSpeed;
+            _moving = false;
         }
 
         private void RaisePropertyChanged([CallerMemberName] string? propertyName = null)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new BallDataChangedEventArgs(propertyName, XPosition, YPosition));
+        }
+
+        private void OnLoggerPropertyChanged(
+            object oldValue, object newValue,
+            [CallerMemberName] string? propertyName = null
+        )
+        {
+            Thread thread = new(
+                () => LoggerPropertyChanged?.Invoke(
+                    this,
+                    new LoggerPropertyChangedEventArgs(propertyName, oldValue, newValue)
+                )
+            );
+            thread.Start();
         }
     }
 }

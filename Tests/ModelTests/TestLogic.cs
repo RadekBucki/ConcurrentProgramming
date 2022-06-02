@@ -12,7 +12,6 @@ namespace ModelTests
         private readonly int _ballRadius;
         private const int MaxBallSpeed = 5;
         private const int BoardToBallRatio = 50;
-        private const int BallWeight= 100;
         private List<IBall> _balls = new();
 
         public TestLogic(int boardWidth, int boardHeight)
@@ -33,7 +32,7 @@ namespace ModelTests
             {
                 throw new ArgumentException("Coordinate out of board range.");
             }
-            IBall ball = IBall.CreateBall(x, y, _ballRadius, BallWeight, xSpeed, ySpeed);
+            IBall ball = IBall.CreateBall(x, y, _ballRadius);
             _balls.Add(ball);
             return ball;
         }
@@ -59,7 +58,7 @@ namespace ModelTests
             _balls.Clear();
         }
 
-        public override void CheckCollision(Object s, PropertyChangedEventArgs e)
+        private void CheckCollision(object s, PropertyChangedEventArgs e)
         {
             throw new NotImplementedException();
         }

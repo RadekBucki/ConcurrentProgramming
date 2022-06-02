@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using Data;
 
 namespace Logic
@@ -19,7 +17,5 @@ namespace Logic
         public abstract List<IBall> GetAllBalls();
 
         public abstract void RemoveAllBalls();
-
-        public abstract void CheckCollision(Object s, PropertyChangedEventArgs e);
     }
 }

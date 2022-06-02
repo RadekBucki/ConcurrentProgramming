@@ -19,6 +19,12 @@ namespace Presentation.ViewModel
             StartCommand = new RelayCommand(StartBalls, CanDoDisableButton);
             StopCommand = new RelayCommand(StopBalls, CanDoEnableButton);
             _modelLayer = modelLayer;
+            AppDomain.CurrentDomain.ProcessExit += OnProcessExit!;
+        }
+        
+        private void OnProcessExit (object sender, EventArgs e)
+        {
+            _modelLayer.ClearCircles();
         }
 
         public RelayCommand StartCommand { get; }
@@ -70,9 +76,6 @@ namespace Presentation.ViewModel
 
         private void StopBalls()
         {
-            _modelLayer.ClearCircles();
-            RaisePropertyChanged(nameof(Circles));
-            DoChangeButtonEnabled();
             Environment.Exit(0);
         }
 
